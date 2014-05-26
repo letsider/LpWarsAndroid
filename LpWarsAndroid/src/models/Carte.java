@@ -58,7 +58,7 @@ public class Carte{
 		}
 
 		carte[0][0].setGc(new Gc(theEquipes[0], 0, 0));
-		carte[9][9].setGc(new Gc(theEquipes[1], 9, 9));
+		carte[theCote - 1][theCote - 1].setGc(new Gc(theEquipes[1], theCote - 1, theCote - 1));
 
 		compteur = 0;
 		equipes = new LinkedList<Gc.Couleur>();
