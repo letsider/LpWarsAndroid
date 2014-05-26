@@ -1,7 +1,6 @@
-package com.example.lpwarsandroid;
+package controllers;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.lpwarsandroid.R;
 
 import models.Carte;
 import models.Gc;
