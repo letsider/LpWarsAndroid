@@ -29,7 +29,7 @@ public class Gc {
 	 */
 	public enum Couleur{bleu, rouge};
 	private Couleur equipe;
-
+	
 	/**
 	 * Getters and setters
 	 */

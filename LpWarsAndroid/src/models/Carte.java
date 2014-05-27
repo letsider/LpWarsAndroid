@@ -1,8 +1,14 @@
 package models;
 
-import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
+import com.example.lpwarsandroid.R;
+
+import controllers.MainActivity;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 
 /**
  * Classe gerant le plateau de jeu
@@ -23,6 +29,11 @@ public class Carte{
 	private List<Gc.Couleur> equipes;
 	private Gc.Couleur equipeActuelle;
 	private Iterator<Gc.Couleur> equipeActuelleIt;
+	
+	/**
+	 * Permet de stocker les différents contenus dynamiques créés
+	 */
+	LinearLayout[] postLayout;
 
 	/**
 	 * Getters and setters
@@ -48,13 +59,22 @@ public class Carte{
 		this.carte[i][j] = theCase;
 	}
 
-	public Carte(Integer theCote, Gc.Couleur [] theEquipes){
+	public Carte(MainActivity theContext, Integer theCote, Gc.Couleur [] theEquipes){
+		postLayout = new LinearLayout[theCote];
 		carte = new Case[theCote][theCote];
 
+		// Définition du Layout à construire.
+		LinearLayout existLayout = (LinearLayout) theContext.findViewById(R.id.layoutOfDynamicContent);
+		LayoutParams params = new LayoutParams(80, 80);
+		
 		for(int i=0; i < theCote; ++i){
+			postLayout[i] = new LinearLayout(theContext);
+			postLayout[i].setOrientation(LinearLayout.HORIZONTAL);
 			for (int j=0; j < theCote ; ++j){
-				carte[i][j] = new Case(i, j);
+				carte[i][j] = new Case(i, j, theContext);
+				postLayout[i].addView( carte[i][j].getMonImage(), params ); 
 			}
+			existLayout.addView(postLayout[i]);
 		}
 
 		carte[0][0].setGc(new Gc(theEquipes[0], 0, 0));
