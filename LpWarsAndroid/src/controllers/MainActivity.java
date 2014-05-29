@@ -2,7 +2,7 @@ package controllers;
 
 import models.Carte;
 import models.Gc;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -12,36 +12,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.lpwarsandroid.R;
 
 public class MainActivity extends ActionBarActivity {
 
 	private Carte plateauDeJeu = null;
-	private final Integer cote = new Integer(5);
+	private final Integer cote = Integer.valueOf(5);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_main);
+		setContentView(R.layout.plateau);
 
 		plateauDeJeu = new Carte(this, cote, new Gc.Couleur[]{Gc.Couleur.bleu, Gc.Couleur.rouge});
 
 	}
 
-	public void addListenerOnButton(ImageButton theTarget, final int theId) {
+	public void addListenerOnButton(ImageButton theTarget, final Gc theGc) {
 
+		// Si l'objet à passer n'a pas de valeur, 
+		// on évite le NullPointerException 
+		// lors de son utilisation dans la prochaine
+		// activité
+		if(theGc == null){
+			return;
+		}
+		
 		theTarget.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-
-				Toast.makeText(MainActivity.this,
-						"ImageButton is clicked!" + theId, Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(MainActivity.this, ActionsActivity.class);
+				intent.putExtra("gcClicked", theGc);
+				startActivity(intent);
 
 			}
 
@@ -80,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+			View rootView = inflater.inflate(R.layout.plateau, container, false);
 			return rootView;
 		}
 	}

@@ -2,7 +2,11 @@
 <resources>
 
     <string name="app_name">LpWarsAndroid</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="pa">Point d\'action :</string>
+    <string name="pm">Point de mouvement :</string>
+    <string name="pv">Point de vie :</string>
+    <string name="whatToDo">Effectuer une action</string>
+    <string name="getBack">Retour</string>
 
 </resources>

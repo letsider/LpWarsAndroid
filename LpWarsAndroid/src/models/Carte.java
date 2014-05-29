@@ -59,7 +59,7 @@ public class Carte{
 		this.carte[i][j] = theCase;
 	}
 
-	public Carte(MainActivity theContext, Integer theCote, Gc.Couleur [] theEquipes){
+	public Carte(MainActivity theContext, Integer theCote, Gc.Couleur [] theEquipes) {
 		postLayout = new LinearLayout[theCote];
 		carte = new Case[theCote][theCote];
 
@@ -120,6 +120,16 @@ public class Carte{
 		}
 
 		return enVie;
+	}
+
+	public boolean isValidCoords(int theI, int theJ) {
+		if(theI < 0 || theJ < 0){ 
+			return false;
+		} else if(theI >= carte.length || theJ >= carte[0].length){
+			return false;
+		} 
+		
+		return true;
 	}
 
 }

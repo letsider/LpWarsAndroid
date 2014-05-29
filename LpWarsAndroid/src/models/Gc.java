@@ -1,9 +1,15 @@
 package models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Classe gerant les groupes de combats
+ * 
+ * Cette classe implémente Serializable afin de pouvoir être échangée
+ * d'une activité à l'autre
  */
-public class Gc {
+public class Gc implements Parcelable{
 
 	/**
 	 * Point de vie du GC
@@ -89,6 +95,54 @@ public class Gc {
 		j = thej;
 		equipe = theEquipe;
 	}
+	
+	@Override
+    public int describeContents(){
+        return 0;
+    }
+
+	/**
+	 * Parce l'objet
+	 */
+    @Override
+    public void writeToParcel(Parcel theDest, int theFlags) {
+    	theDest.writeInt(pv);
+    	theDest.writeInt(pa);
+    	theDest.writeInt(pm);
+    	theDest.writeInt(i);
+    	theDest.writeInt(j);
+    }
+    
+    public static final Parcelable.Creator<Gc> CREATOR = new Parcelable.Creator<Gc>() {
+        public Gc createFromParcel(Parcel in) {
+            return new Gc(in); 
+        }
+
+        public Gc[] newArray(int size) {
+            return new Gc[size];
+        }
+    };
+	
+	/**
+	 * Permet de reconstruire l'objet à partir de donnée parcé
+	 * @param theData ==> sortie de writeToParcel
+	 */
+	public Gc(Parcel theData){
+        
+        switch(theData.readInt()){
+        case 1:
+        	equipe = Couleur.bleu;
+        	break;
+        case 2:
+        	equipe = Couleur.rouge;
+        	break;
+        }
+        pv = Integer.valueOf(theData.readInt());
+        pa = Integer.valueOf(theData.readInt());
+        pm = Integer.valueOf(theData.readInt());
+        i = Integer.valueOf(theData.readInt());
+        j = Integer.valueOf(theData.readInt());
+    }
 
 	public Boolean estMort(){
 		return (pv <= 0);
@@ -114,4 +168,31 @@ public class Gc {
 		}
 		else return false;
 	}
+	
+	public void actionPossible(){
+		// TODO
+//		// Pour toutes les cases à la porté du Gc
+//		for(int cpti = (theGc.geti() - theGc.getPm()); 
+//				cpti < (theGc.geti() + theGc.getPm()); 
+//				++cpti){
+//			for(int cptj = (theGc.geti() - theGc.getPm());
+//					cptj < (theGc.geti() + theGc.getPm());
+//					++cptj){
+//				// Si les coordonnées sont bien sur le plateau de jeu \\n
+//				// et que la case testé n'est pas celle de noter Gc courrant
+//				if(plateauDeJeu.isValidCoords(cpti, cptj)
+//						&& cpti != theGc.geti() && cptj != theGc.getj()){
+//					
+//					// On test si la case courrant est voisine de celle de notre Gc
+//					// courrant
+//					if(plateauDeJeu.getCarte()[theGc.geti()][theGc.getj()]
+//							.isVoisin(plateauDeJeu.getCarte()[cpti][cptj])){
+//						continue;
+//					}
+//				}
+//
+//			}
+//		}
+	}
+
 }
