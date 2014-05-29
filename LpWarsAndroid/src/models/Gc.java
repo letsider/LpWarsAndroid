@@ -2,6 +2,8 @@ package models;
 
 import java.io.Serializable;
 
+import com.example.lpwarsandroid.R;
+
 /**
  * Classe gerant les groupes de combats
  * 
@@ -31,14 +33,13 @@ public class Gc implements Serializable{
 	 */
 	private Integer pm;
 
-	private Integer i;
-	private Integer j;
-
 	/**
 	 * Equipe du GC
 	 */
 	public enum Couleur{bleu, rouge};
 	private Couleur equipe;
+	
+	private Case maCase;
 	
 	/**
 	 * Getters and setters
@@ -59,12 +60,16 @@ public class Gc implements Serializable{
 		return this.equipe;
 	}
 
-	public Integer geti(){
-		return this.i;
+	public Case getMaCase() {
+		return maCase;
+	}
+	
+	public int geti(){
+		return maCase. geti();
 	}
 
-	public Integer getj(){
-		return this.j;
+	public int getj(){
+		return maCase. getj();
 	}
 
 	public void setPv(Integer thePv){
@@ -83,20 +88,18 @@ public class Gc implements Serializable{
 		this.equipe = theEquipe;
 	}
 
-	public void seti(Integer thei){
-		this.i = thei;
+	public void setMaCase(Case maCase) {
+		this.maCase = maCase;
 	}
 
-	public void setj(Integer thej){
-		this.j = thej;
-	}
 
-	public Gc(Couleur theEquipe, Integer thei, Integer thej){
+	public Gc(Couleur theEquipe, Case theCase){
 		pv = 100;
 		pa = 10;
 		pm = 2;
-		i = thei;
-		j = thej;
+		
+		maCase = theCase;
+		
 		equipe = theEquipe;
 	}
 	
@@ -104,12 +107,20 @@ public class Gc implements Serializable{
 		return (pv <= 0);
 	}
 
+	/**
+	 * Effectue le mouvement le mouvement du gc this de maCase
+	 * jusqu'à theCarte[thei][thej]
+	 * 
+	 * @param theCarte la carte sur laquelle je suis en mouvement
+	 * @param thei abscice
+	 * @param thej ordonnée
+	 * @return si le mouvement à eu lieu
+	 */
 	public Boolean mouvement(Case [][] theCarte, Integer thei, Integer thej){
-		if(Math.abs(i - thei) + Math.abs(j - thej) <= pm){
+		if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
 			theCarte[thei][thej].setGc(this);
-			theCarte[i][j].setGc(null);
-			i = thei;
-			j = thej;
+			theCarte[geti()][getj()].setGc(null);
+			maCase = theCarte[thei][thej];
 			pm = 0;
 			return true;
 		}
@@ -117,7 +128,7 @@ public class Gc implements Serializable{
 	}
 
 	public Boolean attaque(Gc gcDef){
-		if(Math.abs(i - gcDef.geti()) + Math.abs(j - gcDef.getj()) == 1){
+		if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
 			gcDef.setPv(gcDef.getPv() - this.pa);
 			this.pm = 0;
 			return true;
@@ -126,29 +137,40 @@ public class Gc implements Serializable{
 	}
 	
 	public void actionPossible(){
-		// TODO
-//		// Pour toutes les cases à la porté du Gc
-//		for(int cpti = (theGc.geti() - theGc.getPm()); 
-//				cpti < (theGc.geti() + theGc.getPm()); 
-//				++cpti){
-//			for(int cptj = (theGc.geti() - theGc.getPm());
-//					cptj < (theGc.geti() + theGc.getPm());
-//					++cptj){
-//				// Si les coordonnées sont bien sur le plateau de jeu \\n
-//				// et que la case testé n'est pas celle de noter Gc courrant
-//				if(plateauDeJeu.isValidCoords(cpti, cptj)
-//						&& cpti != theGc.geti() && cptj != theGc.getj()){
-//					
-//					// On test si la case courrant est voisine de celle de notre Gc
-//					// courrant
-//					if(plateauDeJeu.getCarte()[theGc.geti()][theGc.getj()]
-//							.isVoisin(plateauDeJeu.getCarte()[cpti][cptj])){
-//						continue;
-//					}
-//				}
-//
-//			}
-//		}
+		Case[][] carte = maCase.getMonPlateau().getCarte();
+		
+		// Réduction du carré d'itération grâce au déplacement max du Gc
+		for(int cpti = (geti() - pm); cpti <= (geti() + pm); ++cpti) {
+			for(int cptj = (getj() - pm); cptj <= (getj() + pm); ++cptj){
+				
+				// Si les coordonnées sont bien sur le plateau de jeu \\n
+				// Que la case fait partie de ma portée
+				// et que la case testé n'est pas celle de notre Gc courrant
+				if(maCase.getMonPlateau().isValidCoords(cpti, cptj)
+						&& (Math.abs(geti() - carte[cpti][cptj].geti())
+								+ Math.abs(getj() - carte[cpti][cptj].getj())
+								<= pm)
+						&& ! (cpti == geti() && cptj == getj())){
+				
+					// Si la case est vide, je peux y aller
+					if(carte[cpti][cptj].getGc() == null){
+						// changement de l'image de la case et on
+						// itère sur la case suivante
+						carte[cpti][cptj].changeMonImage(null, true);
+						continue;
+					}
+					
+					// S'il n'est pas dans mon camp
+					// On vérifie que l'on peut l'atteindre
+					if(carte[cpti][cptj].getGc().getEquipe() != equipe
+							&& carte[geti()][getj()].isVoisin(carte[cpti][cptj])){
+						carte[cpti][cptj].changeMonImage(carte[cpti][cptj].getGc().getEquipe(), true);
+						continue;
+					}
+					
+					// Dans tout les autres cas, la case n'est pas accessible
+				}
+			}
+		}
 	}
-
 }

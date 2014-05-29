@@ -1,5 +1,8 @@
 package models;
 
+import java.io.Serializable;
+
+import android.util.Log;
 import android.widget.ImageButton;
 
 import com.example.lpwarsandroid.R;
@@ -9,7 +12,7 @@ import controllers.MainActivity;
 /**
  * Classe gerant le contenu d'une case
  */
-public class Case{
+public class Case implements Serializable{
 
 	/**
 	 * pointeur vers le GC
@@ -22,9 +25,11 @@ public class Case{
 
 	/**
 	 * Pointeur vers le bouton dynamique de cette case
+	 * transient est le .gitignore de Serializable
+	 * sauf que celui la marche à tout les coups
 	 */
-	private ImageButton monImage;
-	private MainActivity monContext;
+	private transient ImageButton monImage;
+	private transient MainActivity monContext;
 
 	/**
 	 * Getters and setters
@@ -40,6 +45,10 @@ public class Case{
 	public Integer getj(){
 		return j;
 	}
+	
+	public Carte getMonPlateau(){
+		return monContext.plateauDeJeu;
+	}
 
 	public ImageButton getMonImage() {
 		return monImage;
@@ -48,17 +57,35 @@ public class Case{
 
 	public void setGc(Gc theGc){
 		this.gc = theGc;
-		changeMonImage(theGc.getEquipe());
-		monContext.addListenerOnButton(monImage, theGc);
+		if(gc != null) {
+			changeMonImage(theGc.getEquipe());
+			monContext.addListenerOnButton(monImage, theGc);
+		} else {
+			changeMonImage(null);
+		}
 	}
 
 	public void changeMonImage(Gc.Couleur theColor){
+		changeMonImage(theColor, false);
+	}
+	
+	public void changeMonImage(Gc.Couleur theColor, boolean theDark){
+		Log.i("Case::changeMonImage", "changement d'image de la case {" + i + "," + j + "}");
 		if(Gc.Couleur.bleu.equals(theColor)){
 			monImage.setBackgroundResource(R.drawable.blue_inf);
 		} else if(Gc.Couleur.rouge.equals(theColor)){
-			monImage.setBackgroundResource(R.drawable.red_inf);
+			if(theDark){
+				monImage.setBackgroundResource(R.drawable.red_inf_dark);
+			} else {
+				monImage.setBackgroundResource(R.drawable.red_inf);
+			}
 		} else {
-			monImage.setBackgroundResource(R.drawable.ic_launcher);
+			if(theDark){
+				monImage.setBackgroundResource(R.drawable.can_move);
+			}
+			else {
+				monImage.setBackgroundResource(R.drawable.ic_launcher);
+			}
 		}
 	}
 
@@ -70,8 +97,10 @@ public class Case{
 		monImage = new ImageButton( theContext );
 		changeMonImage(null);
 		monImage.setId(i * 10 +  j);
+		monImage.setTag(i * 10 +  j);
 		
 		monContext = theContext;
+		Log.i("Case::Case", "Création d'une nouvelle case");
 	}
 
 	public Case(Gc theGc, Integer thei, Integer thej, MainActivity theContext){

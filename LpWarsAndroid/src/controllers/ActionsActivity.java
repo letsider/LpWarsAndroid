@@ -3,7 +3,6 @@ package controllers;
 
 import models.Gc;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,12 +29,26 @@ public class ActionsActivity extends Activity {
         currentText = (TextView) findViewById(R.id.pm);
         currentText.setText(currentText.getText().toString() + gc.getPm());
 
-        Button getBack = (Button) findViewById(R.id.getBack);
-        getBack.setOnClickListener(new OnClickListener() {
+        Button getBackR = (Button) findViewById(R.id.getBack);
+        getBackR.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 
+				setResult(Activity.RESULT_CANCELED);
+				finish();
+
+			}
+
+		});
+        
+        Button getBackV = (Button) findViewById(R.id.select);
+        getBackV.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+
+				setResult(Activity.RESULT_OK, getIntent());
 				finish();
 
 			}

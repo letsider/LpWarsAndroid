@@ -8,5 +8,6 @@
     <string name="pv">Point de vie :</string>
     <string name="whatToDo">Effectuer une action</string>
     <string name="getBack">Retour</string>
+    <string name="select">Sélectionner</string>
 
 </resources>

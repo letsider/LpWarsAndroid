@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.lpwarsandroid.R;
 
 import controllers.MainActivity;
+import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 
@@ -66,7 +67,9 @@ public class Carte{
 		// Définition du Layout à construire.
 		LinearLayout existLayout = (LinearLayout) theContext.findViewById(R.id.layoutOfDynamicContent);
 		LayoutParams params = new LayoutParams(80, 80);
-		
+
+		Log.d("Carte::Carte", "Rentrée dans la boucle d'init de chaque case");
+
 		for(int i=0; i < theCote; ++i){
 			postLayout[i] = new LinearLayout(theContext);
 			postLayout[i].setOrientation(LinearLayout.HORIZONTAL);
@@ -77,9 +80,15 @@ public class Carte{
 			existLayout.addView(postLayout[i]);
 		}
 
-		carte[0][0].setGc(new Gc(theEquipes[0], 0, 0));
-		carte[theCote - 1][theCote - 1].setGc(new Gc(theEquipes[1], theCote - 1, theCote - 1));
+		Log.i("Carte::Carte", "init des positionnement des pions");
+		carte[0][0].setGc(new Gc(theEquipes[1], carte[0][0]));
+		carte[1][1].setGc(new Gc(theEquipes[0], carte[1][1]));
+		carte[0][1].setGc(new Gc(theEquipes[1], carte[0][1]));
+		carte[1][0].setGc(new Gc(theEquipes[0], carte[1][0]));
+		
+		carte[theCote - 1][theCote - 1].setGc(new Gc(theEquipes[1], carte[theCote - 1][theCote - 1]));
 
+		Log.i("Carte::Carte", "init des équipes et des pointeurs sur listes d'équipes");
 		compteur = 0;
 		equipes = new LinkedList<Gc.Couleur>();
 		for(Gc.Couleur newOne : theEquipes){
