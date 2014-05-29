@@ -1,7 +1,6 @@
 package models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.io.Serializable;
 
 /**
  * Classe gerant les groupes de combats
@@ -9,7 +8,12 @@ import android.os.Parcelable;
  * Cette classe implémente Serializable afin de pouvoir être échangée
  * d'une activité à l'autre
  */
-public class Gc implements Parcelable{
+public class Gc implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Point de vie du GC
@@ -96,54 +100,6 @@ public class Gc implements Parcelable{
 		equipe = theEquipe;
 	}
 	
-	@Override
-    public int describeContents(){
-        return 0;
-    }
-
-	/**
-	 * Parce l'objet
-	 */
-    @Override
-    public void writeToParcel(Parcel theDest, int theFlags) {
-    	theDest.writeInt(pv);
-    	theDest.writeInt(pa);
-    	theDest.writeInt(pm);
-    	theDest.writeInt(i);
-    	theDest.writeInt(j);
-    }
-    
-    public static final Parcelable.Creator<Gc> CREATOR = new Parcelable.Creator<Gc>() {
-        public Gc createFromParcel(Parcel in) {
-            return new Gc(in); 
-        }
-
-        public Gc[] newArray(int size) {
-            return new Gc[size];
-        }
-    };
-	
-	/**
-	 * Permet de reconstruire l'objet à partir de donnée parcé
-	 * @param theData ==> sortie de writeToParcel
-	 */
-	public Gc(Parcel theData){
-        
-        switch(theData.readInt()){
-        case 1:
-        	equipe = Couleur.bleu;
-        	break;
-        case 2:
-        	equipe = Couleur.rouge;
-        	break;
-        }
-        pv = Integer.valueOf(theData.readInt());
-        pa = Integer.valueOf(theData.readInt());
-        pm = Integer.valueOf(theData.readInt());
-        i = Integer.valueOf(theData.readInt());
-        j = Integer.valueOf(theData.readInt());
-    }
-
 	public Boolean estMort(){
 		return (pv <= 0);
 	}

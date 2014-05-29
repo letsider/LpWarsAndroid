@@ -20,7 +20,7 @@ public class ActionsActivity extends Activity {
         setContentView(R.layout.actions);
 
         // Récupération du Gc transmit
-        Gc gc = (Gc) getIntent().getExtras().getParcelable("gcClicked");
+        Gc gc = (Gc) getIntent().getExtras().getSerializable("gcClicked");
         
         // Affichage des données dynamiques transmises
         TextView currentText = (TextView) findViewById(R.id.pv);
