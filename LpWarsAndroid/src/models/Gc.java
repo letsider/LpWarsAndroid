@@ -1,8 +1,8 @@
 package models;
 
 import java.io.Serializable;
-
-import com.example.lpwarsandroid.R;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe gerant les groupes de combats
@@ -136,8 +136,17 @@ public class Gc implements Serializable{
 		else return false;
 	}
 	
-	public void actionPossible(){
+	/**
+	 *
+	 * Cette fonction permet de connaitre toutes les actions que
+	 * le Gc peut faire
+	 *
+	 * @return un tabelau de tableau contenant des pointeurs sur les cases accessibles
+	 * Si une action n'est pas possible LA CASE SERA NULL ! ! !
+	 */
+	public List<Case> actionPossible(){
 		Case[][] carte = maCase.getMonPlateau().getCarte();
+		List<Case> casesALImageTemporaire = new ArrayList<Case>();
 		
 		// Réduction du carré d'itération grâce au déplacement max du Gc
 		for(int cpti = (geti() - pm); cpti <= (geti() + pm); ++cpti) {
@@ -157,6 +166,8 @@ public class Gc implements Serializable{
 						// changement de l'image de la case et on
 						// itère sur la case suivante
 						carte[cpti][cptj].changeMonImage(null, true);
+						// indexatino de la case changé
+						casesALImageTemporaire.add(carte[cpti][cptj]);
 						continue;
 					}
 					
@@ -164,7 +175,9 @@ public class Gc implements Serializable{
 					// On vérifie que l'on peut l'atteindre
 					if(carte[cpti][cptj].getGc().getEquipe() != equipe
 							&& carte[geti()][getj()].isVoisin(carte[cpti][cptj])){
+						
 						carte[cpti][cptj].changeMonImage(carte[cpti][cptj].getGc().getEquipe(), true);
+						casesALImageTemporaire.add(carte[cpti][cptj]);
 						continue;
 					}
 					
@@ -172,5 +185,6 @@ public class Gc implements Serializable{
 				}
 			}
 		}
+		return casesALImageTemporaire;
 	}
 }

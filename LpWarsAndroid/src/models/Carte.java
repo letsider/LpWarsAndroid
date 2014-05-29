@@ -81,12 +81,20 @@ public class Carte{
 		}
 
 		Log.i("Carte::Carte", "init des positionnement des pions");
-		carte[0][0].setGc(new Gc(theEquipes[1], carte[0][0]));
-		carte[1][1].setGc(new Gc(theEquipes[0], carte[1][1]));
-		carte[0][1].setGc(new Gc(theEquipes[1], carte[0][1]));
-		carte[1][0].setGc(new Gc(theEquipes[0], carte[1][0]));
-		
+		carte[0][0].setGc(new Gc(theEquipes[0], carte[0][0]));
 		carte[theCote - 1][theCote - 1].setGc(new Gc(theEquipes[1], carte[theCote - 1][theCote - 1]));
+
+		carte[6][6].setGc(new Gc(theEquipes[0], carte[6][6]));
+
+		carte[2][2].setGc(new Gc(theEquipes[0], carte[2][2]));
+		carte[1][1].setGc(new Gc(theEquipes[1], carte[1][1]));
+		carte[1][2].setGc(new Gc(theEquipes[1], carte[1][2]));
+		carte[1][3].setGc(new Gc(theEquipes[1], carte[1][3]));
+		carte[2][1].setGc(new Gc(theEquipes[1], carte[2][1]));
+		carte[2][3].setGc(new Gc(theEquipes[1], carte[2][3]));
+		carte[3][1].setGc(new Gc(theEquipes[1], carte[3][1]));
+		carte[3][2].setGc(new Gc(theEquipes[1], carte[3][2]));
+		carte[3][3].setGc(new Gc(theEquipes[1], carte[3][3]));
 
 		Log.i("Carte::Carte", "init des équipes et des pointeurs sur listes d'équipes");
 		compteur = 0;

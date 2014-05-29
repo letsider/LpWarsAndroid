@@ -1,10 +1,13 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.Carte;
+import models.Case;
 import models.Gc;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -21,8 +24,18 @@ import configuration.Names;
 
 public class MainActivity extends ActionBarActivity {
 
+	/**
+	 * Doit contenir tout les plateaux
+	 * A ce jour, qu'un !
+	 */
 	public Carte plateauDeJeu = null;
-	public final Integer cote = Integer.valueOf(5);
+	/**
+	 * Cette variable permet de stocker un historique des cases ayant une image
+	 * temporaire adapté à un évenement préci
+	 */
+	public final List<Case> caseAffichageTemporaire = new ArrayList<Case>();
+
+	public final Integer cote = Integer.valueOf(12);
 
 	/**
 	 * ---------------------------------------------------------------------------
@@ -37,6 +50,21 @@ public class MainActivity extends ActionBarActivity {
 		plateauDeJeu = new Carte(this, cote, new Gc.Couleur[]{Gc.Couleur.bleu, Gc.Couleur.rouge});
 		Log.i("MainActivity::OnCreate", "initialisation d'une map");
 
+	}
+	
+	public void reinitImagesPlateau(){
+		// Lors d'un nouveau click, on annule les affiches temporaires
+		// de la précédentes sélections
+		for(Case curCase : caseAffichageTemporaire){
+			if(curCase.getGc() == null){
+				curCase.changeMonImage(null);
+			} else {
+				curCase.changeMonImage(curCase.getGc().getEquipe());						
+			}
+		}
+		// Remise à l'état de la map avant de précédent click
+		// l'historique est supprimé
+		caseAffichageTemporaire.clear();
 	}
 
 	public void addListenerOnButton(ImageButton theTarget, final Gc theGc) {
@@ -53,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
 
 			@Override
 			public void onClick(View arg0) {
+				reinitImagesPlateau();
 				Intent intent = new Intent(MainActivity.this, ActionsActivity.class);
 				intent.putExtra(Names.GC_CLICKED, theGc);
 				startActivityForResult(intent, IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS);
@@ -69,17 +98,21 @@ public class MainActivity extends ActionBarActivity {
 		super.onActivityResult(theRequestCode, theResultCode, theIntent);
 		
 		switch(theRequestCode) {
-		case IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS : 
+		case IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS :
+			
 			switch (theResultCode) {
 			case Activity.RESULT_OK:
+				
 				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.GC_CLICKED);
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
-				plateauDeJeu.getCarte()[gcClicked.geti()][gcClicked.getj()].getGc().actionPossible();
+			caseAffichageTemporaire.addAll(plateauDeJeu.getCarte()[gcClicked.geti()][gcClicked.getj()].getGc().actionPossible());
+				
+				break;
 			case Activity.RESULT_CANCELED:
 			default:
 				break;
-			} 
+			}
 			break;
 		default:
 			break;

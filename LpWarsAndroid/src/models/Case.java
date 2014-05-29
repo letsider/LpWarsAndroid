@@ -15,6 +15,11 @@ import controllers.MainActivity;
 public class Case implements Serializable{
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * pointeur vers le GC
 	 * @see Gc
 	 */
