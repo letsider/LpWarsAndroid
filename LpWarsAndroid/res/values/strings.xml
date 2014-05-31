@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">LpWarsAndroid</string>
-    <string name="action_settings">Settings</string>
-    <string name="pa">Point d\'action :</string>
+    <string name="fin_de_tour">Finir mon tour</string>
+    <string name="pa">Point d\'attaque :</string>
     <string name="pm">Point de mouvement :</string>
     <string name="pv">Point de vie :</string>
     <string name="whatToDo">Effectuer une action</string>

@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 
 import com.example.lpwarsandroid.R;
 
+import configuration.CodeActions;
 import configuration.IdentifiantsActivity;
 import configuration.Names;
 
@@ -52,22 +53,73 @@ public class MainActivity extends ActionBarActivity {
 
 	}
 	
-	public void reinitImagesPlateau(){
-		// Lors d'un nouveau click, on annule les affiches temporaires
-		// de la précédentes sélections
+	@Override 
+	public void onActivityResult(int theRequestCode, int theResultCode, Intent theIntent) {
+		super.onActivityResult(theRequestCode, theResultCode, theIntent);
+
+		switch(theRequestCode) {
+		case IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS :
+
+			switch (theResultCode) {
+			case Activity.RESULT_OK:
+
+				// Avant de faire l'action attendu, on assure la validité du plateau
+				// en le mettant dans son état stable
+				reinitImageButtonPlateau();
+
+				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.GC_CLICKED);
+				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
+				// alors que le plateauDeJeu de jeu n'a pas bougé !
+				caseAffichageTemporaire.addAll(
+						plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj())
+						.getGc().setActionPossible());
+				
+				break;
+			case Activity.RESULT_CANCELED:
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * Cette fonction va permettre de stocker les ImmageBuuton n'ayant pas
+	 * une valeur stable
+	 * c-a-d une image indiquant un mouvement possible ou une unité attaquable
+	 * ainsi qu'un listener relatif à ceux en début de tour
+	 */
+	public void reinitImageButtonPlateau(){
+		// Pour chaque case ayant été modifié temporairement
 		for(Case curCase : caseAffichageTemporaire){
 			if(curCase.getGc() == null){
-				curCase.changeMonImage(null);
+				curCase.changeMonImage(false);
+				removeListenerOAction(curCase.getMonImage());
 			} else {
-				curCase.changeMonImage(curCase.getGc().getEquipe());						
+				curCase.changeMonImage(false);
+				setListenerOnButton(curCase.getMonImage(), curCase.getGc());
 			}
 		}
-		// Remise à l'état de la map avant de précédent click
-		// l'historique est supprimé
 		caseAffichageTemporaire.clear();
 	}
 
-	public void addListenerOnButton(ImageButton theTarget, final Gc theGc) {
+	/**
+	 * ---------------------------------------------------------------------------
+	 * 								Gestion des listeners
+	 * ---------------------------------------------------------------------------
+	 */
+	
+	/**
+	 * Ajoute un listener sur le bouton theTarget
+	 * Ce Listener ouvrira une nouvelle activité affichant les informations
+	 * du Gc theGc
+	 * 
+	 * @param theTarget l'image bouton à affecter
+	 * @param theGc le Gc réprésenté sur cet image bouton
+	 */
+	public void setListenerOnButton(ImageButton theTarget, final Gc theGc) {
 
 		// Si l'objet à passer n'a pas de valeur, 
 		// on évite le NullPointerException 
@@ -81,11 +133,34 @@ public class MainActivity extends ActionBarActivity {
 
 			@Override
 			public void onClick(View arg0) {
-				reinitImagesPlateau();
 				Intent intent = new Intent(MainActivity.this, ActionsActivity.class);
 				intent.putExtra(Names.GC_CLICKED, theGc);
 				startActivityForResult(intent, IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS);
+			}
 
+		});
+		Log.i("MainActivity::addListenerOnButton", theTarget.getTag().toString() + " à changé d'OnClick");
+
+	}
+	
+	public void setActionOnButton(ImageButton theTarget, final int theCodeAction,
+			final Gc theGcTargeted, final Case theWhere) {
+		
+		theTarget.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				switch(theCodeAction){
+				case CodeActions.ATTAQUER:
+					theGcTargeted.attaque(theWhere.getGc());
+					break;
+				case CodeActions.SE_DEPLACER:
+					theGcTargeted.mouvement(plateauDeJeu, theWhere.geti(), theWhere.getj());
+					break;
+				}
+				
+				// Après une action, on remet le plateau dans un état stable
+				reinitImageButtonPlateau();
 			}
 
 		});
@@ -93,30 +168,19 @@ public class MainActivity extends ActionBarActivity {
 
 	}
 
-	@Override 
-	public void onActivityResult(int theRequestCode, int theResultCode, Intent theIntent) {
-		super.onActivityResult(theRequestCode, theResultCode, theIntent);
-		
-		switch(theRequestCode) {
-		case IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS :
-			
-			switch (theResultCode) {
-			case Activity.RESULT_OK:
-				
-				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.GC_CLICKED);
-				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
-				// alors que le plateauDeJeu de jeu n'a pas bougé !
-			caseAffichageTemporaire.addAll(plateauDeJeu.getCarte()[gcClicked.geti()][gcClicked.getj()].getGc().actionPossible());
-				
-				break;
-			case Activity.RESULT_CANCELED:
-			default:
-				break;
+	/**
+	 * Cette fonction permet de supprimer le listener d'un ImageButton
+	 * @param theTarget l'image bouton dont le litener n'a plus lieu d'être
+	 */
+	public void removeListenerOAction(ImageButton theTarget){
+		theTarget.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				return;
 			}
-			break;
-		default:
-			break;
-		}
+
+		});
 	}
 
 	/**
@@ -139,9 +203,14 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		switch (id) {
+		case R.id.fin_de_tour:
+			plateauDeJeu.finTour();
+			break;
+		default:
+			break;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 

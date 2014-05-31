@@ -41,7 +41,10 @@ public class Carte{
 	 */
 
 	public Case getCase(Integer i, Integer j){
-		return this.carte[i][j];
+		if(isValidCoords(i, j)){
+			return this.carte[i][j];
+		}
+		return null;
 	}
 
 	public Integer getCompteur(){
@@ -50,10 +53,6 @@ public class Carte{
 
 	public Gc.Couleur getEquipeActuelle(){
 		return this.equipeActuelle;
-	}
-
-	public Case [][] getCarte(){
-		return this.carte;
 	}
 
 	public void setcase(Integer i, Integer j, Case theCase){
@@ -117,8 +116,15 @@ public class Carte{
 			equipeActuelleIt = equipes.iterator();
 			equipeActuelle = equipeActuelleIt.next();
 		}
+		
+		for(int i=0; i < carte.length; ++i){
+			for (int j=0; j < carte[i].length ; ++j){ 
+				if(getCase(i, j).getGc() != null){
+					getCase(i, j).getGc().setPm(2);
+				}
+			}
+		}
 
-		return;
 	}
 
 	public Gc.Couleur gagner(){

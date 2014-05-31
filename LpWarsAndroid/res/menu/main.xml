@@ -4,9 +4,9 @@
     tools:context="com.example.lpwarsandroid.MainActivity" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/fin_de_tour"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/fin_de_tour"
         app:showAsAction="never"/>
 
 </menu>

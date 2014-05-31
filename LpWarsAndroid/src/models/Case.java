@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 
 import com.example.lpwarsandroid.R;
 
+import configuration.CodeActions;
 import controllers.MainActivity;
 
 /**
@@ -62,28 +63,58 @@ public class Case implements Serializable{
 
 	public void setGc(Gc theGc){
 		this.gc = theGc;
+		changeMonImage(false);
 		if(gc != null) {
-			changeMonImage(theGc.getEquipe());
-			monContext.addListenerOnButton(monImage, theGc);
+			monContext.setListenerOnButton(monImage, theGc);
 		} else {
-			changeMonImage(null);
+			monContext.removeListenerOAction(monImage);
 		}
 	}
-
-	public void changeMonImage(Gc.Couleur theColor){
-		changeMonImage(theColor, false);
+	
+	public Boolean isMine(){
+		if(gc == null){
+			return false;
+		}
+		if(monContext.plateauDeJeu.getEquipeActuelle() != gc.getEquipe()){
+			return false;
+		}
+		
+		return true;
 	}
 	
-	public void changeMonImage(Gc.Couleur theColor, boolean theDark){
+	/**
+	 * Cette méthode permet de changer l'image de l'ImageButton entre deux possibilité
+	 * @param theDark définit si l'image est c'elle d'origine ou celle d'action
+	 * En d'autre terme, si la case est vide et Dark vaut true alors l'image affiché sera
+	 * celle d'un mouvement possible, si dark est false, l'image sera de la verdure 
+	 */
+	public void changeMonImage(boolean theDark){
 		Log.i("Case::changeMonImage", "changement d'image de la case {" + i + "," + j + "}");
-		if(Gc.Couleur.bleu.equals(theColor)){
+
+		Gc.Couleur color = null;
+		try{
+			// Si gc == null ...
+			color = gc.getEquipe();
+		} catch (NullPointerException ex){
+			// on met de la verdure !
+			if(theDark){
+				monImage.setBackgroundResource(R.drawable.can_move);
+			}
+			else {
+				monImage.setBackgroundResource(R.drawable.ic_launcher);
+			}
+			return;
+		}
+
+		if(Gc.Couleur.bleu.equals(color)){
 			monImage.setBackgroundResource(R.drawable.blue_inf);
-		} else if(Gc.Couleur.rouge.equals(theColor)){
+		} else if(Gc.Couleur.rouge.equals(color)){
 			if(theDark){
 				monImage.setBackgroundResource(R.drawable.red_inf_dark);
 			} else {
 				monImage.setBackgroundResource(R.drawable.red_inf);
 			}
+		// si la couleur n'est pas connu, il faut la déclarer ! ! !
 		} else {
 			if(theDark){
 				monImage.setBackgroundResource(R.drawable.can_move);
@@ -93,6 +124,16 @@ public class Case implements Serializable{
 			}
 		}
 	}
+	
+	/**
+	 * Cette méthode permet de créer une action sur un click 
+	 * @param theCodeAction l'action en question
+	 * @param theTarget le gc de la case depuis laquelle l'action est lancée
+	 * @see CodeActions
+	 */
+	public void changeMonAction(int theCodeAction, Gc theTargeted){
+		monContext.setActionOnButton(monImage, theCodeAction, theTargeted, this);
+	}
 
 	public Case(Integer thei, Integer thej, MainActivity theContext){
 		gc = null;
@@ -100,25 +141,12 @@ public class Case implements Serializable{
 		j = thej;
 
 		monImage = new ImageButton( theContext );
-		changeMonImage(null);
+		changeMonImage(false);
 		monImage.setId(i * 10 +  j);
 		monImage.setTag(i * 10 +  j);
 		
 		monContext = theContext;
 		Log.i("Case::Case", "Création d'une nouvelle case");
-	}
-
-	public Case(Gc theGc, Integer thei, Integer thej, MainActivity theContext){
-		this.gc = theGc;
-		i = thei;
-		j = thej;
-
-		monImage = new ImageButton( monContext );
-		changeMonImage(theGc.getEquipe());
-		monImage.setId(i * 10 +  j);
-
-		monContext =theContext; 
-		monContext.addListenerOnButton(monImage, theGc);
 	}
 
 	public Boolean estVide() {

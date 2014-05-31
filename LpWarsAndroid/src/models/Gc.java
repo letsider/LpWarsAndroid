@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import configuration.CodeActions;
+
 /**
  * Classe gerant les groupes de combats
  * 
@@ -116,24 +118,30 @@ public class Gc implements Serializable{
 	 * @param thej ordonnée
 	 * @return si le mouvement à eu lieu
 	 */
-	public Boolean mouvement(Case [][] theCarte, Integer thei, Integer thej){
-		if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
-			theCarte[thei][thej].setGc(this);
-			theCarte[geti()][getj()].setGc(null);
-			maCase = theCarte[thei][thej];
-			pm = 0;
-			return true;
+	public Boolean mouvement(Carte theCarte, Integer thei, Integer thej){
+		if(maCase.isMine()){
+			// Si la cible est a porté !
+			if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
+				theCarte.getCase(thei, thej).setGc(this);
+				theCarte.getCase(geti(), getj()).setGc(null);
+				maCase = theCarte.getCase(thei, thej);
+				pm = 0;
+				return true;
+			}
 		}
-		else return false;
+		return false;
 	}
 
 	public Boolean attaque(Gc gcDef){
-		if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
-			gcDef.setPv(gcDef.getPv() - this.pa);
-			this.pm = 0;
-			return true;
+		if(maCase.isMine()){
+			// Si la cible est a porté
+			if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
+				gcDef.setPv(gcDef.getPv() - this.pa);
+				this.pm = 0;
+				return true;
+			}
 		}
-		else return false;
+		return false;
 	}
 	
 	/**
@@ -144,8 +152,8 @@ public class Gc implements Serializable{
 	 * @return un tabelau de tableau contenant des pointeurs sur les cases accessibles
 	 * Si une action n'est pas possible LA CASE SERA NULL ! ! !
 	 */
-	public List<Case> actionPossible(){
-		Case[][] carte = maCase.getMonPlateau().getCarte();
+	public List<Case> setActionPossible(){
+		Carte carte = maCase.getMonPlateau();
 		List<Case> casesALImageTemporaire = new ArrayList<Case>();
 		
 		// Réduction du carré d'itération grâce au déplacement max du Gc
@@ -156,28 +164,33 @@ public class Gc implements Serializable{
 				// Que la case fait partie de ma portée
 				// et que la case testé n'est pas celle de notre Gc courrant
 				if(maCase.getMonPlateau().isValidCoords(cpti, cptj)
-						&& (Math.abs(geti() - carte[cpti][cptj].geti())
-								+ Math.abs(getj() - carte[cpti][cptj].getj())
+						&& (Math.abs(geti() - cpti)
+								+ Math.abs(getj() - cptj)
 								<= pm)
 						&& ! (cpti == geti() && cptj == getj())){
 				
 					// Si la case est vide, je peux y aller
-					if(carte[cpti][cptj].getGc() == null){
+					if(carte.getCase(cpti, cptj).getGc() == null){
 						// changement de l'image de la case et on
+						carte.getCase(cpti, cptj).changeMonImage(true);
+						// Mise en place du listener pour effectuer l'action
+						carte.getCase(cpti, cptj).changeMonAction(CodeActions.SE_DEPLACER, this);
+						
+						// indexation de la case changé
+						casesALImageTemporaire.add(carte.getCase(cpti, cptj));
 						// itère sur la case suivante
-						carte[cpti][cptj].changeMonImage(null, true);
-						// indexatino de la case changé
-						casesALImageTemporaire.add(carte[cpti][cptj]);
 						continue;
 					}
 					
 					// S'il n'est pas dans mon camp
 					// On vérifie que l'on peut l'atteindre
-					if(carte[cpti][cptj].getGc().getEquipe() != equipe
-							&& carte[geti()][getj()].isVoisin(carte[cpti][cptj])){
+					if(carte.getCase(cpti, cptj).getGc().getEquipe() != equipe
+							&& carte.getCase(geti(), getj()).isVoisin(carte.getCase(cpti, cptj))){
 						
-						carte[cpti][cptj].changeMonImage(carte[cpti][cptj].getGc().getEquipe(), true);
-						casesALImageTemporaire.add(carte[cpti][cptj]);
+						carte.getCase(cpti, cptj).changeMonImage(true);
+						carte.getCase(cpti, cptj).changeMonAction(CodeActions.ATTAQUER, this);
+
+						casesALImageTemporaire.add(carte.getCase(cpti, cptj));
 						continue;
 					}
 					
