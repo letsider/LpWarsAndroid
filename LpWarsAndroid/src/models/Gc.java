@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import configuration.CodeActions;
+import configuration.Unites;
 
 /**
  * Classe gerant les groupes de combats
  * 
  * Cette classe implémente Serializable afin de pouvoir être échangée
  * d'une activité à l'autre
+ * @see Unites
  */
-public class Gc implements Serializable{
+public class Gc extends Unites implements Serializable{
 
 	/**
 	 * 
@@ -34,6 +36,8 @@ public class Gc implements Serializable{
 	 * Point de mouvement
 	 */
 	private Integer pm;
+	
+	private final Integer type;
 
 	/**
 	 * Equipe du GC
@@ -56,6 +60,10 @@ public class Gc implements Serializable{
 
 	public Integer getPm(){
 		return this.pm;
+	}
+
+	public Integer getType() {
+		return type;
 	}
 
 	public Couleur getEquipe(){
@@ -99,13 +107,32 @@ public class Gc implements Serializable{
 	}
 
 
-	public Gc(Couleur theEquipe, Case theCase){
-		pv = 10;
-		pa = 10;
-		pm = 2;
-		
+	/**
+	 * 
+	 * @param theEquipe couleur de l'équipe du Gc
+	 * @param theCase la case ou il doit être placé
+	 * @param theCodeUnite code depuis Names.Unites
+	 * @throws IllegalArgumentException Si le codeUnite est inconnu
+	 */
+	public Gc(Couleur theEquipe, Case theCase, int theCodeUnite)
+	throws IllegalArgumentException{
+		switch (theCodeUnite) {
+		case 0:
+			pv = Unites.Infanterie.PV;
+			pa = Unites.Infanterie.PA;
+			pm = Unites.Infanterie.PM;
+			break;
+		case 1:
+			pv = Unites.Vehicule.PV;
+			pa = Unites.Vehicule.PA;
+			pm = Unites.Vehicule.PM;
+			break;
+
+		default:
+			throw new IllegalArgumentException("Cet entier n'est pas connu des codes d'initialisation d'un GC cf Names.Unites");
+		}
+		type = theCodeUnite;
 		maCase = theCase;
-		
 		equipe = theEquipe;
 	}
 	

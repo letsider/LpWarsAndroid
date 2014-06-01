@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public final List<Case> caseAffichageTemporaire = new ArrayList<Case>();
 
-	public final Integer cote = Integer.valueOf(12);
+	public final Integer cote = Integer.valueOf(6);
 
 	/**
 	 * ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
 				// en le mettant dans son état stable
 				reinitImageButtonPlateau();
 
-				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.GC_CLICKED);
+				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.Generales.GC_CLICKED);
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
 				caseAffichageTemporaire.addAll(
@@ -134,7 +134,12 @@ public class MainActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(MainActivity.this, ActionsActivity.class);
-				intent.putExtra(Names.GC_CLICKED, theGc);
+				intent.putExtra(Names.Generales.GC_CLICKED, theGc);
+				if(theGc.getEquipe().equals(plateauDeJeu.getEquipeActuelle())){
+					intent.putExtra(Names.Generales.SELECTIONNALBLE, true);
+				} else {
+					intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
+				}
 				startActivityForResult(intent, IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS);
 			}
 
@@ -206,6 +211,9 @@ public class MainActivity extends ActionBarActivity {
 		switch (id) {
 		case R.id.fin_de_tour:
 			plateauDeJeu.finTour();
+			if(plateauDeJeu.gagner() != null){
+				finish();
+			};
 			break;
 		default:
 			break;
