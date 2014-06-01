@@ -137,8 +137,9 @@ int dimen abc_dropdownitem_text_padding_right 0x7f08000f
 int dimen abc_panel_menu_list_width 0x7f08000b
 int dimen abc_search_view_preferred_width 0x7f08000d
 int dimen abc_search_view_text_min_width 0x7f08000c
-int dimen activity_horizontal_margin 0x7f080011
-int dimen activity_vertical_margin 0x7f080012
+int dimen activity_horizontal_margin 0x7f080013
+int dimen plateauHeigth 0x7f080012
+int dimen plateauWidth 0x7f080011
 int drawable abc_ab_bottom_solid_dark_holo 0x7f020000
 int drawable abc_ab_bottom_solid_light_holo 0x7f020001
 int drawable abc_ab_bottom_transparent_dark_holo 0x7f020002
@@ -230,6 +231,7 @@ int drawable blue_inf 0x7f020057
 int drawable can_move 0x7f020058
 int drawable ic_launcher 0x7f020059
 int drawable red_inf 0x7f02005a
+int drawable red_inf_dark 0x7f02005b
 int id action_bar 0x7f05001c
 int id action_bar_activity_content 0x7f050015
 int id action_bar_container 0x7f05001b
@@ -241,7 +243,6 @@ int id action_context_bar 0x7f05001d
 int id action_menu_divider 0x7f050016
 int id action_menu_presenter 0x7f050017
 int id action_mode_close_button 0x7f050024
-int id action_settings 0x7f050041
 int id activity_chooser_view_content 0x7f050025
 int id always 0x7f05000b
 int id beginning 0x7f050011
@@ -255,13 +256,14 @@ int id edit_query 0x7f050030
 int id end 0x7f050013
 int id expand_activities_button 0x7f050026
 int id expanded_menu 0x7f05002c
-int id getBack 0x7f05003f
+int id fin_de_tour 0x7f050042
+int id getBack 0x7f050040
 int id home 0x7f050014
 int id homeAsUp 0x7f050005
 int id icon 0x7f05002a
 int id ifRoom 0x7f05000a
 int id image 0x7f050027
-int id layoutOfDynamicContent 0x7f050040
+int id layoutOfDynamicContent 0x7f050041
 int id listMode 0x7f050001
 int id list_item 0x7f050029
 int id middle 0x7f050012
@@ -284,6 +286,7 @@ int id search_mag_icon 0x7f050035
 int id search_plate 0x7f050036
 int id search_src_text 0x7f050037
 int id search_voice_btn 0x7f05003b
+int id select 0x7f05003f
 int id shortcut 0x7f05002e
 int id showCustom 0x7f050007
 int id showHome 0x7f050004
@@ -337,12 +340,13 @@ int string abc_searchview_description_submit 0x7f0a0007
 int string abc_searchview_description_voice 0x7f0a0008
 int string abc_shareactionprovider_share_with 0x7f0a000c
 int string abc_shareactionprovider_share_with_application 0x7f0a000b
-int string action_settings 0x7f0a000e
 int string app_name 0x7f0a000d
+int string fin_de_tour 0x7f0a000e
 int string getBack 0x7f0a0013
 int string pa 0x7f0a000f
 int string pm 0x7f0a0010
 int string pv 0x7f0a0011
+int string select 0x7f0a0014
 int string whatToDo 0x7f0a0012
 int style AppBaseTheme 0x7f0b0083
 int style AppTheme 0x7f0b0084

@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import configuration.CodeActions;
-import configuration.Unites;
+import configuration.UnitesEtBatiment;
 
 /**
  * Classe gerant les groupes de combats
  * 
  * Cette classe implémente Serializable afin de pouvoir être échangée
  * d'une activité à l'autre
- * @see Unites
+ * @see UnitesEtBatiment
  */
-public class Gc extends Unites implements Serializable{
+public class Gc extends UnitesEtBatiment implements Serializable{
 
 	/**
 	 * 
@@ -75,11 +75,11 @@ public class Gc extends Unites implements Serializable{
 	}
 	
 	public int geti(){
-		return maCase. geti();
+		return maCase.geti();
 	}
 
 	public int getj(){
-		return maCase. getj();
+		return maCase.getj();
 	}
 
 	public void setPv(Integer thePv){
@@ -118,14 +118,14 @@ public class Gc extends Unites implements Serializable{
 	throws IllegalArgumentException{
 		switch (theCodeUnite) {
 		case 0:
-			pv = Unites.Infanterie.PV;
-			pa = Unites.Infanterie.PA;
-			pm = Unites.Infanterie.PM;
+			pv = UnitesEtBatiment.Unites.Infanterie.PV;
+			pa = UnitesEtBatiment.Unites.Infanterie.PA;
+			pm = UnitesEtBatiment.Unites.Infanterie.PM;
 			break;
 		case 1:
-			pv = Unites.Vehicule.PV;
-			pa = Unites.Vehicule.PA;
-			pm = Unites.Vehicule.PM;
+			pv = UnitesEtBatiment.Unites.Vehicule.PV;
+			pa = UnitesEtBatiment.Unites.Vehicule.PA;
+			pm = UnitesEtBatiment.Unites.Vehicule.PM;
 			break;
 
 		default:

@@ -16,11 +16,21 @@ public class Names {
 		public static final String GC_CLICKED = "gcClicked";
 	}
 
-	public static class Unites {
-
-		public static final Integer INFANTERIE = 0;
+	public static class UnitesEtBatiment {
 		
-		public static final Integer VEHICULE = 1;
+		public static class Batiment {
+
+			public static Integer CASERNE = 0;
+
+			public static Integer USINE_DE_CHAR = 1;
+		}
+
+		public static class Unites {
+
+			public static final Integer INFANTERIE = 0;
+			
+			public static final Integer VEHICULE = 1;
+		}
 
 	}
 }
