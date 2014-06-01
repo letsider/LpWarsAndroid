@@ -75,7 +75,11 @@ public class Gc implements Serializable{
 	}
 
 	public void setPv(Integer thePv){
-		this.pv = thePv;
+		if(thePv <= 0){
+			getMaCase().setGc(null);
+		} else {
+			this.pv = thePv;
+		}
 	}
 
 	public void setPa(Integer thePa){
@@ -96,7 +100,7 @@ public class Gc implements Serializable{
 
 
 	public Gc(Couleur theEquipe, Case theCase){
-		pv = 100;
+		pv = 10;
 		pa = 10;
 		pm = 2;
 		
