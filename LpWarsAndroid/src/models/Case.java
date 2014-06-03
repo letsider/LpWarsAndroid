@@ -106,7 +106,7 @@ public class Case implements Serializable{
 				monImage.setBackgroundResource(R.drawable.can_move);
 			}
 			else {
-				monImage.setBackgroundResource(R.drawable.ic_launcher);
+				monImage.setBackgroundResource(R.drawable.empty);
 			}
 			return;
 		}
