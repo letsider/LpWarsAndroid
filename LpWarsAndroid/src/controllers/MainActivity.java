@@ -102,9 +102,9 @@ public class MainActivity extends ActionBarActivity {
 				removeListenerOAction(curCase.getMonImage());
 			} else {
 				if(curCase.getPion().getClass().equals(Gc.class)){
-					setListenerOnButton(curCase.getMonImage(), (Gc)curCase.getPion());
+					setListenerOnButton(curCase.getMonImage(), curCase.getPion());
 				} else if(curCase.getPion().getClass().equals(Batiment.class)){
-					setListenerOnButton(curCase.getMonImage(), (Batiment)curCase.getPion());
+					setListenerOnButton(curCase.getMonImage(), curCase.getPion());
 				}
 			}
 		}

@@ -75,10 +75,12 @@ public class Batiment implements Serializable, Pion {
 		}
 	}
 
+	@Override
 	public void setEquipe(Couleur theEquipe){
 		this.equipe = theEquipe;
 	}
 
+	@Override
 	public void setMaCase(Case maCase) {
 		this.maCase = maCase;
 	}

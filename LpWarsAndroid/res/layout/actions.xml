@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:id="@+id/infos">
+    android:orientation="vertical"
+    android:id="@+id/hightest" >
 
     <TextView
         android:id="@+id/pv"
@@ -11,17 +11,41 @@
         android:layout_height="wrap_content"
         android:text="@string/pv" />
 
+    <TextView
+        android:id="@+id/pa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pa" />
+
+    <TextView
+        android:id="@+id/pm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pm" />
+
     <LinearLayout
-        android:id="@+id/actions"
+        android:id="@+id/actionsButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+    
+    <LinearLayout
+        android:id="@+id/returnButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select" />
+        <Button
             android:id="@+id/getBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/getBack" />
+
     </LinearLayout>
 
 </LinearLayout>

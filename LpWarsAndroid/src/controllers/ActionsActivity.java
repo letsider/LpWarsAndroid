@@ -2,49 +2,38 @@ package controllers;
 
 
 import models.Gc;
+import models.Batiment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.lpwarsandroid.R;
 
 import configuration.Names;
-import configuration.Names.UnitesEtBatiment.Batiment;
 
 public class ActionsActivity extends Activity {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.actions);
-        
-        if(getIntent().getExtras().containsKey(Names.Generales.GC_CLICKED)){
-        	initGcView();
-        } else if (getIntent().getExtras().containsKey(Names.Generales.BATIMENT_CLICKED)) {
-        	initBatimentView();
-        }
-        
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.actions);
 
-    public void initGcView(){
-    	
-        // Récupération du Gc transmit
-        Gc gc = (Gc) getIntent().getExtras().getSerializable(Names.Generales.GC_CLICKED);
-        
-    	// Affichage des données dynamiques transmises
-        TextView currentText = (TextView) findViewById(R.id.pv);
-        currentText.setText(currentText.getText().toString() + gc.getPv());
-        currentText = new TextView(this);
-        currentText.setText("Point d'attaque : " + gc.getPa());
-        currentText = new TextView(this);
-        currentText.setText("Point de mouvement : " + gc.getPm());
-
-        Button getBackR = (Button) findViewById(R.id.getBack);
-        getBackR.setOnClickListener(new OnClickListener() {
+		if(getIntent().getExtras().containsKey(Names.Generales.GC_CLICKED)){
+			initGcView();
+		} else if (getIntent().getExtras().containsKey(Names.Generales.BATIMENT_CLICKED)) {
+			initBatimentView();
+		}
+		
+		// Remise du bouton Retour en dernière position
+		Button getBackR = (Button) findViewById(R.id.getBack);
+		((LinearLayout)findViewById(R.id.returnButtons)).removeView(
+				findViewById(R.id.getBack));
+		getBackR.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
@@ -53,31 +42,66 @@ public class ActionsActivity extends Activity {
 				finish();
 
 			}
-
 		});
-        
-        Button getBackV = new Button(this);
-        if((Boolean) getIntent().getExtras().getSerializable(Names.Generales.SELECTIONNALBLE)){
-	        getBackV.setOnClickListener(new OnClickListener() {
-	
+		((LinearLayout)findViewById(R.id.returnButtons)).addView(getBackR);
+
+	}
+
+	public void initGcView(){
+
+		// Récupération du Gc transmit
+		Gc gc = (Gc) getIntent().getExtras().getSerializable(Names.Generales.GC_CLICKED);
+
+		// Affichage des données dynamiques transmises
+		TextView currentText = (TextView) findViewById(R.id.pv);
+		currentText.setText(currentText.getText().toString() + gc.getPv());
+		currentText = (TextView) findViewById(R.id.pa);
+		currentText.setText(currentText.getText().toString() + gc.getPa());
+		currentText = (TextView) findViewById(R.id.pm);
+		currentText.setText(currentText.getText().toString() + gc.getPm());
+
+		Button getBackV = (Button) findViewById(R.id.select);
+		if((Boolean) getIntent().getExtras().getSerializable(Names.Generales.SELECTIONNALBLE)){
+			getBackV.setOnClickListener(new OnClickListener() {
+
 				@Override
 				public void onClick(View arg0) {
-	
+
 					setResult(Activity.RESULT_OK, getIntent());
 					finish();
-	
+
 				}
-	
+
 			});
-        } else {
-        	((LinearLayout)getBackR.getParent()).removeView(getBackV);
-        }
-    }
-    
-    public void initBatimentView(){
-    	
-    	// Récupération du Gc transmit
-        Batiment batiment = (Batiment) getIntent().getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
- 
-    }
+		} else {
+			((LinearLayout)findViewById(R.id.returnButtons)).removeView(getBackV);
+		}
+	}
+
+	public void initBatimentView(){
+
+		// Suppression des éléments utiles aux Gc
+		((LinearLayout)findViewById(R.id.hightest)).removeView(
+				findViewById(R.id.pa));
+		((LinearLayout)findViewById(R.id.hightest)).removeView(
+				findViewById(R.id.pm));
+		((LinearLayout)findViewById(R.id.returnButtons)).removeView(
+				findViewById(R.id.select));
+
+		// Récupération du Gc transmit
+		Batiment batiment = (Batiment) getIntent().getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
+		
+		TextView currentText = (TextView) findViewById(R.id.pv);
+		currentText.setText(currentText.getText().toString() + batiment.getPv());
+
+		for(Integer i : batiment.getUnitsCreatable()){
+			switch(i){
+			default:
+				break;
+			}
+			ImageButton unitToCreate = new ImageButton(this);
+			unitToCreate.setBackgroundResource(R.drawable.blue_inf);
+			((LinearLayout)findViewById(R.id.actionsButtons)).addView(unitToCreate);
+		}
+	}
 }
