@@ -13,24 +13,35 @@ import android.widget.TextView;
 import com.example.lpwarsandroid.R;
 
 import configuration.Names;
+import configuration.Names.UnitesEtBatiment.Batiment;
 
 public class ActionsActivity extends Activity {
-	
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actions);
+        
+        if(getIntent().getExtras().containsKey(Names.Generales.GC_CLICKED)){
+        	initGcView();
+        } else if (getIntent().getExtras().containsKey(Names.Generales.BATIMENT_CLICKED)) {
+        	initBatimentView();
+        }
+        
+    }
 
+    public void initGcView(){
+    	
         // Récupération du Gc transmit
         Gc gc = (Gc) getIntent().getExtras().getSerializable(Names.Generales.GC_CLICKED);
         
-        // Affichage des données dynamiques transmises
+    	// Affichage des données dynamiques transmises
         TextView currentText = (TextView) findViewById(R.id.pv);
         currentText.setText(currentText.getText().toString() + gc.getPv());
-        currentText = (TextView) findViewById(R.id.pa);
-        currentText.setText(currentText.getText().toString() + gc.getPa());
-        currentText = (TextView) findViewById(R.id.pm);
-        currentText.setText(currentText.getText().toString() + gc.getPm());
+        currentText = new TextView(this);
+        currentText.setText("Point d'attaque : " + gc.getPa());
+        currentText = new TextView(this);
+        currentText.setText("Point de mouvement : " + gc.getPm());
 
         Button getBackR = (Button) findViewById(R.id.getBack);
         getBackR.setOnClickListener(new OnClickListener() {
@@ -45,7 +56,7 @@ public class ActionsActivity extends Activity {
 
 		});
         
-        Button getBackV = (Button) findViewById(R.id.select);
+        Button getBackV = new Button(this);
         if((Boolean) getIntent().getExtras().getSerializable(Names.Generales.SELECTIONNALBLE)){
 	        getBackV.setOnClickListener(new OnClickListener() {
 	
@@ -61,7 +72,12 @@ public class ActionsActivity extends Activity {
         } else {
         	((LinearLayout)getBackR.getParent()).removeView(getBackV);
         }
-        
     }
-	
+    
+    public void initBatimentView(){
+    	
+    	// Récupération du Gc transmit
+        Batiment batiment = (Batiment) getIntent().getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
+ 
+    }
 }

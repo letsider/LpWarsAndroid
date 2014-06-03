@@ -1,7 +1,10 @@
 package models;
 
+import interfaces.Pion;
+
 import java.io.Serializable;
 
+import models.Gc.Couleur;
 import android.util.Log;
 import android.widget.ImageButton;
 
@@ -24,7 +27,7 @@ public class Case implements Serializable{
 	 * pointeur vers le GC
 	 * @see Gc
 	 */
-	private Gc gc;
+	private Pion pion;
 
 	private Integer i;
 	private Integer j;
@@ -40,8 +43,8 @@ public class Case implements Serializable{
 	/**
 	 * Getters and setters
 	 */
-	public Gc getGc(){
-		return this.gc;
+	public Pion getPion(){
+		return this.pion;
 	}
 
 	public Integer geti(){
@@ -61,21 +64,22 @@ public class Case implements Serializable{
 	}
 
 
-	public void setGc(Gc theGc){
-		this.gc = theGc;
+	public void setPion(Pion thePion){
+		this.pion = thePion;
 		changeMonImage(false);
-		if(gc != null) {
-			monContext.setListenerOnButton(monImage, theGc);
-		} else {
-			monContext.removeListenerOAction(monImage);
+		if(pion != null) {
+			monContext.setListenerOnButton(monImage, thePion);
+			return;
 		}
+
+		monContext.removeListenerOAction(monImage);
 	}
 	
 	public Boolean isMine(){
-		if(gc == null){
+		if(pion == null){
 			return false;
 		}
-		if(monContext.plateauDeJeu.getEquipeActuelle() != gc.getEquipe()){
+		if(monContext.plateauDeJeu.getEquipeActuelle() != pion.getEquipe()){
 			return false;
 		}
 		
@@ -84,17 +88,18 @@ public class Case implements Serializable{
 	
 	/**
 	 * Cette méthode permet de changer l'image de l'ImageButton entre deux possibilité
-	 * @param theDark définit si l'image est c'elle d'origine ou celle d'action
+	 * 
+	 * @param theDark définit si l'image est celle d'origine ou celle d'action
 	 * En d'autre terme, si la case est vide et Dark vaut true alors l'image affiché sera
 	 * celle d'un mouvement possible, si dark est false, l'image sera de la verdure 
 	 */
 	public void changeMonImage(boolean theDark){
 		Log.i("Case::changeMonImage", "changement d'image de la case {" + i + "," + j + "}");
 
-		Gc.Couleur color = null;
+		Couleur color = null;
 		try{
 			// Si gc == null ...
-			color = gc.getEquipe();
+			color = pion.getEquipe();
 		} catch (NullPointerException ex){
 			// on met de la verdure !
 			if(theDark){
@@ -106,9 +111,9 @@ public class Case implements Serializable{
 			return;
 		}
 
-		if(Gc.Couleur.bleu.equals(color)){
+		if(Couleur.bleu.equals(color)){
 			monImage.setBackgroundResource(R.drawable.blue_inf);
-		} else if(Gc.Couleur.rouge.equals(color)){
+		} else if(Couleur.rouge.equals(color)){
 			if(theDark){
 				monImage.setBackgroundResource(R.drawable.red_inf_dark);
 			} else {
@@ -136,7 +141,7 @@ public class Case implements Serializable{
 	}
 
 	public Case(Integer thei, Integer thej, MainActivity theContext){
-		gc = null;
+		pion = null;
 		i = thei;
 		j = thej;
 
@@ -150,7 +155,7 @@ public class Case implements Serializable{
 	}
 
 	public Boolean estVide() {
-		return (gc == null);
+		return (pion == null);
 	}
 
 	/**

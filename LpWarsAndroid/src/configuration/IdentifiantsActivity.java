@@ -11,6 +11,8 @@ package configuration;
  */
 public class IdentifiantsActivity {
 
-	public static final int ID_ACTIVITY_SHOW_DETAILS = 0;
+	public static final int DETAILS_UNIT = 0;
+
+	public static final int DETAILS_BUILDING = 1;
 
 }

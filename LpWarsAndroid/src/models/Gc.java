@@ -1,5 +1,7 @@
 package models;
 
+import interfaces.Pion;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,12 @@ import configuration.UnitesEtBatiment;
  * 
  * Cette classe implémente Serializable afin de pouvoir être échangée
  * d'une activité à l'autre
+ * 
+ * Le fait que la class implémente l'interface Pion, permet
+ * de pouvoir placer un Gc ou un Batiment sur une case
  * @see UnitesEtBatiment
  */
-public class Gc extends UnitesEtBatiment implements Serializable{
+public class Gc implements Serializable, Pion {
 
 	/**
 	 * 
@@ -50,6 +55,7 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 	/**
 	 * Getters and setters
 	 */
+	@Override
 	public Integer getPv(){
 		return this.pv;
 	}
@@ -62,29 +68,35 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 		return this.pm;
 	}
 
-	public Integer getType() {
+	@Override
+	public int getType() {
 		return type;
 	}
 
+	@Override
 	public Couleur getEquipe(){
 		return this.equipe;
 	}
 
+	@Override
 	public Case getMaCase() {
 		return maCase;
 	}
 	
-	public int geti(){
+	@Override
+	public Integer geti(){
 		return maCase.geti();
 	}
 
-	public int getj(){
+	@Override
+	public Integer getj(){
 		return maCase.getj();
 	}
 
+	@Override
 	public void setPv(Integer thePv){
 		if(thePv <= 0){
-			getMaCase().setGc(null);
+			getMaCase().setPion(null);
 		} else {
 			this.pv = thePv;
 		}
@@ -98,10 +110,12 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 		this.pm = thePm;
 	}
 
+	@Override
 	public void setEquipe(Couleur theEquipe){
 		this.equipe = theEquipe;
 	}
 
+	@Override
 	public void setMaCase(Case maCase) {
 		this.maCase = maCase;
 	}
@@ -115,14 +129,14 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 	 * @throws IllegalArgumentException Si le codeUnite est inconnu
 	 */
 	public Gc(Couleur theEquipe, Case theCase, int theCodeUnite)
-	throws IllegalArgumentException{
+	throws IllegalArgumentException {
 		switch (theCodeUnite) {
-		case 0:
+		case UnitesEtBatiment.Unites.Infanterie.ID:
 			pv = UnitesEtBatiment.Unites.Infanterie.PV;
 			pa = UnitesEtBatiment.Unites.Infanterie.PA;
 			pm = UnitesEtBatiment.Unites.Infanterie.PM;
 			break;
-		case 1:
+		case UnitesEtBatiment.Unites.Vehicule.ID:
 			pv = UnitesEtBatiment.Unites.Vehicule.PV;
 			pa = UnitesEtBatiment.Unites.Vehicule.PA;
 			pm = UnitesEtBatiment.Unites.Vehicule.PM;
@@ -153,8 +167,8 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 		if(maCase.isMine()){
 			// Si la cible est a porté !
 			if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
-				theCarte.getCase(thei, thej).setGc(this);
-				theCarte.getCase(geti(), getj()).setGc(null);
+				theCarte.getCase(thei, thej).setPion(this);
+				theCarte.getCase(geti(), getj()).setPion(null);
 				maCase = theCarte.getCase(thei, thej);
 				pm = 0;
 				return true;
@@ -163,7 +177,7 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 		return false;
 	}
 
-	public Boolean attaque(Gc gcDef){
+	public Boolean attaque(Pion gcDef){
 		if(maCase.isMine()){
 			// Si la cible est a porté
 			if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
@@ -201,7 +215,7 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 						&& ! (cpti == geti() && cptj == getj())){
 				
 					// Si la case est vide, je peux y aller
-					if(carte.getCase(cpti, cptj).getGc() == null){
+					if(carte.getCase(cpti, cptj).getPion() == null){
 						// changement de l'image de la case et on
 						carte.getCase(cpti, cptj).changeMonImage(true);
 						// Mise en place du listener pour effectuer l'action
@@ -215,7 +229,7 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 					
 					// S'il n'est pas dans mon camp
 					// On vérifie que l'on peut l'atteindre
-					if(carte.getCase(cpti, cptj).getGc().getEquipe() != equipe
+					if(carte.getCase(cpti, cptj).getPion().getEquipe() != equipe
 							&& carte.getCase(geti(), getj()).isVoisin(carte.getCase(cpti, cptj))){
 						
 						carte.getCase(cpti, cptj).changeMonImage(true);
@@ -229,6 +243,7 @@ public class Gc extends UnitesEtBatiment implements Serializable{
 				}
 			}
 		}
+
 		return casesALImageTemporaire;
 	}
 }

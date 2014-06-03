@@ -1,11 +1,20 @@
 package models;
 
+import interfaces.Pion;
+
 import java.io.Serializable;
+import java.util.List;
 
 import models.Gc.Couleur;
 import configuration.UnitesEtBatiment;
 
-public class Batiment implements Serializable{
+/**
+ * 
+ * Le fait que la class implémente l'interface Pion, permet
+ * de pouvoir placer un Gc ou un Batiment sur une case
+ *
+ */
+public class Batiment implements Serializable, Pion {
 
 	/**
 	 * 
@@ -27,33 +36,40 @@ public class Batiment implements Serializable{
 	/**
 	 * Getters and setters
 	 */
+	@Override
 	public Integer getPv(){
 		return this.pv;
 	}
 
-	public Integer getType() {
+	@Override
+	public int getType() {
 		return type;
 	}
 
+	@Override
 	public Couleur getEquipe(){
 		return this.equipe;
 	}
 
+	@Override
 	public Case getMaCase() {
 		return maCase;
 	}
-	
-	public int geti(){
+
+	@Override
+	public Integer geti(){
 		return maCase.geti();
 	}
 
-	public int getj(){
+	@Override
+	public Integer getj(){
 		return maCase.getj();
 	}
 
+	@Override
 	public void setPv(Integer thePv){
 		if(thePv <= 0){
-			getMaCase().setGc(null);
+			getMaCase().setPion(null);
 		} else {
 			this.pv = thePv;
 		}
@@ -69,10 +85,10 @@ public class Batiment implements Serializable{
 
 	public Batiment(Couleur theEquipe, Case theCase, int theCodeBatiment) {
 		switch(theCodeBatiment){
-		case 0:
+		case UnitesEtBatiment.Batiment.CASERNE.ID:
 			pv = UnitesEtBatiment.Batiment.CASERNE.PV;
 			break;
-		case 1:
+		case UnitesEtBatiment.Batiment.USINE_DE_CHAR.ID:
 			pv = UnitesEtBatiment.Batiment.USINE_DE_CHAR.PV;
 			break;
 		default:
@@ -81,6 +97,19 @@ public class Batiment implements Serializable{
 		type = theCodeBatiment;
 		equipe = theEquipe;
 		maCase = theCase;
+	}
+	
+	public List<Integer> getUnitsCreatable(){
+		switch(type){
+		case UnitesEtBatiment.Batiment.CASERNE.ID:
+			return UnitesEtBatiment.Batiment.CASERNE.unitesDisponible();
+		case UnitesEtBatiment.Batiment.USINE_DE_CHAR.ID:
+			return UnitesEtBatiment.Batiment.USINE_DE_CHAR.unitesDisponible();
+		// default est inutile car le type est matché sur l'instanciation de 
+		// l'objet mais Eclipse veut un default à cause du return au cas ou ... :)
+		default:
+			return null;
+		}
 	}
 	
 	public Gc createGc(int theCodeUnite){

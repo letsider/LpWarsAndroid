@@ -1,8 +1,11 @@
 package controllers;
 
+import interfaces.Pion;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Batiment;
 import models.Carte;
 import models.Case;
 import models.Gc;
@@ -58,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onActivityResult(theRequestCode, theResultCode, theIntent);
 
 		switch(theRequestCode) {
-		case IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS :
+		case IdentifiantsActivity.DETAILS_UNIT :
 
 			switch (theResultCode) {
 			case Activity.RESULT_OK:
@@ -71,8 +74,8 @@ public class MainActivity extends ActionBarActivity {
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
 				caseAffichageTemporaire.addAll(
-						plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj())
-						.getGc().setActionPossible());
+						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj())
+						.getPion()).setActionPossible());
 				
 				break;
 			case Activity.RESULT_CANCELED:
@@ -94,12 +97,15 @@ public class MainActivity extends ActionBarActivity {
 	public void reinitImageButtonPlateau(){
 		// Pour chaque case ayant été modifié temporairement
 		for(Case curCase : caseAffichageTemporaire){
-			if(curCase.getGc() == null){
-				curCase.changeMonImage(false);
+			curCase.changeMonImage(false);
+			if(curCase.getPion() == null){
 				removeListenerOAction(curCase.getMonImage());
 			} else {
-				curCase.changeMonImage(false);
-				setListenerOnButton(curCase.getMonImage(), curCase.getGc());
+				if(curCase.getPion().getClass().equals(Gc.class)){
+					setListenerOnButton(curCase.getMonImage(), (Gc)curCase.getPion());
+				} else if(curCase.getPion().getClass().equals(Batiment.class)){
+					setListenerOnButton(curCase.getMonImage(), (Batiment)curCase.getPion());
+				}
 			}
 		}
 		caseAffichageTemporaire.clear();
@@ -110,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
 	 * 								Gestion des listeners
 	 * ---------------------------------------------------------------------------
 	 */
-	
+
 	/**
 	 * Ajoute un listener sur le bouton theTarget
 	 * Ce Listener ouvrira une nouvelle activité affichant les informations
@@ -119,13 +125,13 @@ public class MainActivity extends ActionBarActivity {
 	 * @param theTarget l'image bouton à affecter
 	 * @param theGc le Gc réprésenté sur cet image bouton
 	 */
-	public void setListenerOnButton(ImageButton theTarget, final Gc theGc) {
+	public void setListenerOnButton(ImageButton theTarget, final Pion thePion) {
 
 		// Si l'objet à passer n'a pas de valeur, 
 		// on évite le NullPointerException 
 		// lors de son utilisation dans la prochaine
 		// activité
-		if(theGc == null){
+		if(thePion == null){
 			return;
 		}
 
@@ -134,20 +140,34 @@ public class MainActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(MainActivity.this, ActionsActivity.class);
-				intent.putExtra(Names.Generales.GC_CLICKED, theGc);
-				if(theGc.getEquipe().equals(plateauDeJeu.getEquipeActuelle())){
-					intent.putExtra(Names.Generales.SELECTIONNALBLE, true);
-				} else {
-					intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
+
+				if(thePion.getClass().equals(Gc.class)){
+
+					intent.putExtra(Names.Generales.GC_CLICKED, (Gc)thePion);
+					if(thePion.getEquipe().equals(plateauDeJeu.getEquipeActuelle())){
+						intent.putExtra(Names.Generales.SELECTIONNALBLE, true);
+					} else {
+						intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
+					}
+
+				} else if(thePion.getClass().equals(Batiment.class)){
+
+					intent.putExtra(Names.Generales.BATIMENT_CLICKED, (Batiment)thePion);
+					if(thePion.getEquipe().equals(plateauDeJeu.getEquipeActuelle())){
+						intent.putExtra(Names.Generales.SELECTIONNALBLE, true);
+					} else {
+						intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
+					}
+
 				}
-				startActivityForResult(intent, IdentifiantsActivity.ID_ACTIVITY_SHOW_DETAILS);
+				startActivityForResult(intent, IdentifiantsActivity.DETAILS_UNIT);
 			}
 
 		});
 		Log.i("MainActivity::addListenerOnButton", theTarget.getTag().toString() + " à changé d'OnClick");
 
 	}
-	
+
 	public void setActionOnButton(ImageButton theTarget, final int theCodeAction,
 			final Gc theGcTargeted, final Case theWhere) {
 		
@@ -157,7 +177,7 @@ public class MainActivity extends ActionBarActivity {
 			public void onClick(View arg0) {
 				switch(theCodeAction){
 				case CodeActions.ATTAQUER:
-					theGcTargeted.attaque(theWhere.getGc());
+					theGcTargeted.attaque(theWhere.getPion());
 					break;
 				case CodeActions.SE_DEPLACER:
 					theGcTargeted.mouvement(plateauDeJeu, theWhere.geti(), theWhere.getj());

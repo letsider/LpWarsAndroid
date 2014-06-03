@@ -6,15 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import models.Gc.Couleur;
+import android.util.Log;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 
 import com.example.lpwarsandroid.R;
 
 import configuration.Names;
 import configuration.UnitesEtBatiment;
 import controllers.MainActivity;
-import android.util.Log;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 
 /**
  * Classe gerant le plateau de jeu
@@ -98,30 +98,47 @@ public class Carte{
 		}
 	}
 	
-	private void initUnit(int thex, int they, int theCodeUnit){
+	private void initUnit(int thex, int they, int theUnitesEtBatimentId, int theCodeUnit){
 		Case curCase = carte[thex + 1][they];
-		curCase.setGc(new Gc(equipeActuelle, curCase, theCodeUnit));
+		switch (theUnitesEtBatimentId) {
+		case Names.UnitesEtBatiment.Batiment.ID:
+			curCase.setPion(new Batiment(equipeActuelle, curCase, theCodeUnit));
+			break;
+		case Names.UnitesEtBatiment.Unites.ID:
+			curCase.setPion(new Gc(equipeActuelle, curCase, theCodeUnit));
+			break;
+		default:
+			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux) : " + theUnitesEtBatimentId);
+		}
 	}
 	
 	private void initUnits(int theBeginningi, int theBeginningj){
 
-		initUnit(theBeginningi, theBeginningj, Names.UnitesEtBatiment.Batiment.CASERNE);
-		initUnit(theBeginningi + 1, theBeginningj, Names.UnitesEtBatiment.Batiment.USINE_DE_CHAR);
-		initUnit(theBeginningi - 1, theBeginningj, Names.UnitesEtBatiment.Unites.VEHICULE);
-		initUnit(theBeginningi + 2, theBeginningj, Names.UnitesEtBatiment.Unites.VEHICULE);
+		initUnit(theBeginningi, theBeginningj,
+				Names.UnitesEtBatiment.Batiment.ID, Names.UnitesEtBatiment.Batiment.CASERNE);
+		initUnit(theBeginningi + 1, theBeginningj, 
+				Names.UnitesEtBatiment.Batiment.ID, Names.UnitesEtBatiment.Batiment.USINE_DE_CHAR);
+		initUnit(theBeginningi - 1, theBeginningj, 
+				Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.VEHICULE);
+		initUnit(theBeginningi + 2, theBeginningj, 
+				Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.VEHICULE);
 
 		switch(equipes.indexOf(equipeActuelle)){
 		case 0:
-			
-			initUnit(theBeginningi, theBeginningj + 1, Names.UnitesEtBatiment.Unites.INFANTERIE);
-			initUnit(theBeginningi + 1, theBeginningj + 1, Names.UnitesEtBatiment.Unites.INFANTERIE);
+			initUnit(theBeginningi, theBeginningj + 1, 
+					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+			initUnit(theBeginningi + 1, theBeginningj + 1, 
+					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
 			break;
 		case 1:
-			initUnit(theBeginningi, theBeginningj - 1, Names.UnitesEtBatiment.Unites.INFANTERIE);
-			initUnit(theBeginningi + 1, theBeginningj - 1, Names.UnitesEtBatiment.Unites.INFANTERIE);
+			initUnit(theBeginningi, theBeginningj - 1, 
+					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+			initUnit(theBeginningi + 1, theBeginningj - 1, 
+					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
 			break;
 		default:
-			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux)");
+			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux) : "
+					+ equipes.indexOf(equipeActuelle));
 		}
 	}
 
@@ -157,14 +174,17 @@ public class Carte{
 		
 		for(int i=0; i < carte.length; ++i){
 			for (int j=0; j < carte[i].length ; ++j){ 
-				if(getCase(i, j).getGc() != null){
-					switch(getCase(i, j).getGc().getType()){
-					case 0:
-						getCase(i, j).getGc().setPm(UnitesEtBatiment.Unites.Infanterie.PM);
-						break;
-					case 1:
-						getCase(i, j).getGc().setPm(UnitesEtBatiment.Unites.Vehicule.PM);
-						break;
+				if(getCase(i, j).getPion() != null){
+					// Seul les groupes de combats ont des points de mouvement
+					if(getCase(i, j).getPion().getClass().equals(Gc.class)){
+						switch(getCase(i, j).getPion().getType()){
+						case UnitesEtBatiment.Unites.Infanterie.ID:
+							((Gc)getCase(i, j).getPion()).setPm(UnitesEtBatiment.Unites.Infanterie.PM);
+							break;
+						case UnitesEtBatiment.Unites.Vehicule.ID:
+							((Gc)getCase(i, j).getPion()).setPm(UnitesEtBatiment.Unites.Vehicule.PM);
+							break;
+						}
 					}
 				}
 			}
@@ -185,12 +205,12 @@ public class Carte{
 
 		for(Case [] ligne : carte){
 			for(Case cellule : ligne){
-				if(cellule.getGc() != null){
-					if(enVie.contains(cellule.getGc().getEquipe())
+				if(cellule.getPion() != null){
+					if(enVie.contains(cellule.getPion().getEquipe())
 							&& enVie.size() == equipes.size()){
 						return null;
 					} else {
-						enVie.add(cellule.getGc().getEquipe());
+						enVie.add(cellule.getPion().getEquipe());
 					}
 				}
 			}
