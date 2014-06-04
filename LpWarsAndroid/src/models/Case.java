@@ -103,7 +103,7 @@ public class Case implements Serializable{
 		} catch (NullPointerException ex){
 			// on met de la verdure !
 			if(theDark){
-				monImage.setBackgroundResource(R.drawable.can_move);
+				monImage.setBackgroundResource(R.drawable.can_move_inf);
 			}
 			else {
 				monImage.setBackgroundResource(R.drawable.empty);
@@ -112,7 +112,11 @@ public class Case implements Serializable{
 		}
 
 		if(Couleur.bleu.equals(color)){
-			monImage.setBackgroundResource(R.drawable.blue_inf);
+			if(theDark){
+				monImage.setBackgroundResource(R.drawable.blue_inf_dark);
+			} else {
+				monImage.setBackgroundResource(R.drawable.blue_inf);
+			}
 		} else if(Couleur.rouge.equals(color)){
 			if(theDark){
 				monImage.setBackgroundResource(R.drawable.red_inf_dark);
@@ -122,7 +126,7 @@ public class Case implements Serializable{
 		// si la couleur n'est pas connu, il faut la déclarer ! ! !
 		} else {
 			if(theDark){
-				monImage.setBackgroundResource(R.drawable.can_move);
+				monImage.setBackgroundResource(R.drawable.can_move_inf);
 			}
 			else {
 				monImage.setBackgroundResource(R.drawable.ic_launcher);
