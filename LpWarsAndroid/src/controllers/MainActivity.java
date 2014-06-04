@@ -1,6 +1,6 @@
 package controllers;
 
-import interfaces.Pion;
+import interfaces.Serialized;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,11 +74,13 @@ public class MainActivity extends ActionBarActivity {
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
 				caseAffichageTemporaire.addAll(
-						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj())
-						.getPion()).setActionPossible());
+						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized())
+						.setActionPossible());
 				
 				break;
 			case Activity.RESULT_CANCELED:
+				reinitImageButtonPlateau();
+				break;
 			default:
 				break;
 			}
@@ -97,14 +99,14 @@ public class MainActivity extends ActionBarActivity {
 	public void reinitImageButtonPlateau(){
 		// Pour chaque case ayant été modifié temporairement
 		for(Case curCase : caseAffichageTemporaire){
-			curCase.changeMonImage(false);
-			if(curCase.getPion() == null){
+			curCase.updateMonImage(false, null);
+			if(curCase.getSerialized() == null){
 				removeListenerOAction(curCase.getMonImage());
 			} else {
-				if(curCase.getPion().getClass().equals(Gc.class)){
-					setListenerOnButton(curCase.getMonImage(), curCase.getPion());
-				} else if(curCase.getPion().getClass().equals(Batiment.class)){
-					setListenerOnButton(curCase.getMonImage(), curCase.getPion());
+				if(curCase.getSerialized().getClass().equals(Gc.class)){
+					setListenerOnButton(curCase.getMonImage(), curCase.getSerialized());
+				} else if(curCase.getSerialized().getClass().equals(Batiment.class)){
+					setListenerOnButton(curCase.getMonImage(), curCase.getSerialized());
 				}
 			}
 		}
@@ -125,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
 	 * @param theTarget l'image bouton à affecter
 	 * @param theGc le Gc réprésenté sur cet image bouton
 	 */
-	public void setListenerOnButton(ImageButton theTarget, final Pion thePion) {
+	public void setListenerOnButton(ImageButton theTarget, final Serialized thePion) {
 
 		// Si l'objet à passer n'a pas de valeur, 
 		// on évite le NullPointerException 
@@ -177,7 +179,9 @@ public class MainActivity extends ActionBarActivity {
 			public void onClick(View arg0) {
 				switch(theCodeAction){
 				case CodeActions.ATTAQUER:
-					theGcTargeted.attaque(theWhere.getPion());
+					if(theWhere.getSerialized().getClass().equals(Gc.class)){
+						theGcTargeted.attaque((Gc)theWhere.getSerialized());
+					}
 					break;
 				case CodeActions.SE_DEPLACER:
 					theGcTargeted.mouvement(plateauDeJeu, theWhere.geti(), theWhere.getj());
@@ -233,7 +237,8 @@ public class MainActivity extends ActionBarActivity {
 			plateauDeJeu.finTour();
 			if(plateauDeJeu.gagner() != null){
 				finish();
-			};
+			}
+			reinitImageButtonPlateau();
 			break;
 		default:
 			break;

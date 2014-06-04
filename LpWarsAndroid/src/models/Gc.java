@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.Pion;
+import interfaces.Serialized;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import configuration.UnitesEtBatiment;
  * de pouvoir placer un Gc ou un Batiment sur une case
  * @see UnitesEtBatiment
  */
-public class Gc implements Serializable, Pion {
+public class Gc implements Serializable, Serialized {
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class Gc implements Serializable, Pion {
 	 * Point de mouvement
 	 */
 	private Integer pm;
-	
+
 	private final Integer type;
 
 	/**
@@ -49,13 +49,12 @@ public class Gc implements Serializable, Pion {
 	 */
 	public enum Couleur{bleu, rouge};
 	private Couleur equipe;
-	
+
 	private Case maCase;
-	
+
 	/**
 	 * Getters and setters
 	 */
-	@Override
 	public Integer getPv(){
 		return this.pv;
 	}
@@ -82,7 +81,7 @@ public class Gc implements Serializable, Pion {
 	public Case getMaCase() {
 		return maCase;
 	}
-	
+
 	@Override
 	public Integer geti(){
 		return maCase.geti();
@@ -93,10 +92,9 @@ public class Gc implements Serializable, Pion {
 		return maCase.getj();
 	}
 
-	@Override
 	public void setPv(Integer thePv){
 		if(thePv <= 0){
-			getMaCase().setPion(null);
+			getMaCase().setGc(null);
 		} else {
 			this.pv = thePv;
 		}
@@ -129,7 +127,7 @@ public class Gc implements Serializable, Pion {
 	 * @throws IllegalArgumentException Si le codeUnite est inconnu
 	 */
 	public Gc(Couleur theEquipe, Case theCase, int theCodeUnite)
-	throws IllegalArgumentException {
+			throws IllegalArgumentException {
 		switch (theCodeUnite) {
 		case UnitesEtBatiment.Unites.Infanterie.ID:
 			pv = UnitesEtBatiment.Unites.Infanterie.PV;
@@ -149,7 +147,7 @@ public class Gc implements Serializable, Pion {
 		maCase = theCase;
 		equipe = theEquipe;
 	}
-	
+
 	public Boolean estMort(){
 		return (pv <= 0);
 	}
@@ -167,8 +165,8 @@ public class Gc implements Serializable, Pion {
 		if(maCase.isMine()){
 			// Si la cible est a porté !
 			if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
-				theCarte.getCase(thei, thej).setPion(this);
-				theCarte.getCase(geti(), getj()).setPion(null);
+				theCarte.getCase(thei, thej).setGc(this);
+				theCarte.getCase(geti(), getj()).setGc(null);
 				maCase = theCarte.getCase(thei, thej);
 				pm = 0;
 				return true;
@@ -177,7 +175,7 @@ public class Gc implements Serializable, Pion {
 		return false;
 	}
 
-	public Boolean attaque(Pion gcDef){
+	public Boolean attaque(Gc gcDef){
 		if(maCase.isMine()){
 			// Si la cible est a porté
 			if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
@@ -188,57 +186,59 @@ public class Gc implements Serializable, Pion {
 		}
 		return false;
 	}
-	
+
 	/**
 	 *
 	 * Cette fonction permet de connaitre toutes les actions que
-	 * le Gc peut faire
+	 * le Gc peut faire (visuellement)
 	 *
-	 * @return un tabelau de tableau contenant des pointeurs sur les cases accessibles
+	 * @return un tableau de tableau contenant des pointeurs sur les cases accessibles
 	 * Si une action n'est pas possible LA CASE SERA NULL ! ! !
 	 */
 	public List<Case> setActionPossible(){
 		Carte carte = maCase.getMonPlateau();
 		List<Case> casesALImageTemporaire = new ArrayList<Case>();
-		
+
 		// Réduction du carré d'itération grâce au déplacement max du Gc
 		for(int cpti = (geti() - pm); cpti <= (geti() + pm); ++cpti) {
 			for(int cptj = (getj() - pm); cptj <= (getj() + pm); ++cptj){
-				
+
 				// Si les coordonnées sont bien sur le plateau de jeu \\n
-				// Que la case fait partie de ma portée
-				// et que la case testé n'est pas celle de notre Gc courrant
+				// ET Que la case fait partie de ma portée
+				// ET que la case testé n'est pas celle de notre Gc courrant
 				if(maCase.getMonPlateau().isValidCoords(cpti, cptj)
 						&& (Math.abs(geti() - cpti)
 								+ Math.abs(getj() - cptj)
-								<= pm)
-						&& ! (cpti == geti() && cptj == getj())){
-				
-					// Si la case est vide, je peux y aller
-					if(carte.getCase(cpti, cptj).getPion() == null){
+								<= pm) && ! (cpti == geti() && cptj == getj())){
+
+					// Si la case n'a pas de Gc dessus
+					// Je vérifie que je ne suis pas un véhicule pour monter sur le batiment
+					if(carte.getCase(cpti, cptj).getSerialized() == null
+							|| (carte.getCase(cpti, cptj).getSerialized().getClass().equals(Batiment.class)
+							&& getType() != UnitesEtBatiment.Unites.Vehicule.ID)){
 						// changement de l'image de la case et on
-						carte.getCase(cpti, cptj).changeMonImage(true);
+						carte.getCase(cpti, cptj).updateMonImage(true, getType());
 						// Mise en place du listener pour effectuer l'action
 						carte.getCase(cpti, cptj).changeMonAction(CodeActions.SE_DEPLACER, this);
-						
+
 						// indexation de la case changé
 						casesALImageTemporaire.add(carte.getCase(cpti, cptj));
 						// itère sur la case suivante
 						continue;
 					}
-					
+
 					// S'il n'est pas dans mon camp
 					// On vérifie que l'on peut l'atteindre
-					if(carte.getCase(cpti, cptj).getPion().getEquipe() != equipe
+					if(carte.getCase(cpti, cptj).getSerialized().getEquipe() != equipe
 							&& carte.getCase(geti(), getj()).isVoisin(carte.getCase(cpti, cptj))){
-						
-						carte.getCase(cpti, cptj).changeMonImage(true);
+
+						carte.getCase(cpti, cptj).updateMonImage(true, null);
 						carte.getCase(cpti, cptj).changeMonAction(CodeActions.ATTAQUER, this);
 
 						casesALImageTemporaire.add(carte.getCase(cpti, cptj));
 						continue;
 					}
-					
+
 					// Dans tout les autres cas, la case n'est pas accessible
 				}
 			}

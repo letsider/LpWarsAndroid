@@ -102,10 +102,10 @@ public class Carte{
 		Case curCase = carte[thex + 1][they];
 		switch (theUnitesEtBatimentId) {
 		case Names.UnitesEtBatiment.Batiment.ID:
-			curCase.setPion(new Batiment(equipeActuelle, curCase, theCodeUnit));
+			curCase.setBatiment(new Batiment(equipeActuelle, curCase, theCodeUnit));
 			break;
 		case Names.UnitesEtBatiment.Unites.ID:
-			curCase.setPion(new Gc(equipeActuelle, curCase, theCodeUnit));
+			curCase.setGc(new Gc(equipeActuelle, curCase, theCodeUnit));
 			break;
 		default:
 			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux) : " + theUnitesEtBatimentId);
@@ -174,15 +174,15 @@ public class Carte{
 		
 		for(int i=0; i < carte.length; ++i){
 			for (int j=0; j < carte[i].length ; ++j){ 
-				if(getCase(i, j).getPion() != null){
+				if(getCase(i, j).getSerialized() != null){
 					// Seul les groupes de combats ont des points de mouvement
-					if(getCase(i, j).getPion().getClass().equals(Gc.class)){
-						switch(getCase(i, j).getPion().getType()){
+					if(getCase(i, j).getSerialized().getClass().equals(Gc.class)){
+						switch(getCase(i, j).getSerialized().getType()){
 						case UnitesEtBatiment.Unites.Infanterie.ID:
-							((Gc)getCase(i, j).getPion()).setPm(UnitesEtBatiment.Unites.Infanterie.PM);
+							((Gc)getCase(i, j).getSerialized()).setPm(UnitesEtBatiment.Unites.Infanterie.PM);
 							break;
 						case UnitesEtBatiment.Unites.Vehicule.ID:
-							((Gc)getCase(i, j).getPion()).setPm(UnitesEtBatiment.Unites.Vehicule.PM);
+							((Gc)getCase(i, j).getSerialized()).setPm(UnitesEtBatiment.Unites.Vehicule.PM);
 							break;
 						}
 					}
@@ -205,12 +205,12 @@ public class Carte{
 
 		for(Case [] ligne : carte){
 			for(Case cellule : ligne){
-				if(cellule.getPion() != null){
-					if(enVie.contains(cellule.getPion().getEquipe())
+				if(cellule.getSerialized() != null){
+					if(enVie.contains(cellule.getSerialized().getEquipe())
 							&& enVie.size() == equipes.size()){
 						return null;
 					} else {
-						enVie.add(cellule.getPion().getEquipe());
+						enVie.add(cellule.getSerialized().getEquipe());
 					}
 				}
 			}

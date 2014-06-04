@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.Pion;
+import interfaces.Serialized;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +14,7 @@ import configuration.UnitesEtBatiment;
  * de pouvoir placer un Gc ou un Batiment sur une case
  *
  */
-public class Batiment implements Serializable, Pion {
+public class Batiment implements Serializable, Serialized {
 
 	/**
 	 * 
@@ -36,10 +36,6 @@ public class Batiment implements Serializable, Pion {
 	/**
 	 * Getters and setters
 	 */
-	@Override
-	public Integer getPv(){
-		return this.pv;
-	}
 
 	@Override
 	public int getType() {
@@ -64,15 +60,6 @@ public class Batiment implements Serializable, Pion {
 	@Override
 	public Integer getj(){
 		return maCase.getj();
-	}
-
-	@Override
-	public void setPv(Integer thePv){
-		if(thePv <= 0){
-			getMaCase().setPion(null);
-		} else {
-			this.pv = thePv;
-		}
 	}
 
 	@Override

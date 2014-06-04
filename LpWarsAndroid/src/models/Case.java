@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.Pion;
+import interfaces.Serialized;
 
 import java.io.Serializable;
 
@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import com.example.lpwarsandroid.R;
 
 import configuration.CodeActions;
+import configuration.UnitesEtBatiment;
 import controllers.MainActivity;
 
 /**
@@ -27,7 +28,9 @@ public class Case implements Serializable{
 	 * pointeur vers le GC
 	 * @see Gc
 	 */
-	private Pion pion;
+	private Gc gc;
+	
+	private Batiment batiment;
 
 	private Integer i;
 	private Integer j;
@@ -43,8 +46,11 @@ public class Case implements Serializable{
 	/**
 	 * Getters and setters
 	 */
-	public Pion getPion(){
-		return this.pion;
+	public Serialized getSerialized(){
+		if(gc != null){
+			return gc;
+		}
+		return batiment;
 	}
 
 	public Integer geti(){
@@ -64,69 +70,141 @@ public class Case implements Serializable{
 	}
 
 
-	public void setPion(Pion thePion){
-		this.pion = thePion;
-		changeMonImage(false);
-		if(pion != null) {
-			monContext.setListenerOnButton(monImage, thePion);
+	public void setGc(Gc theGc){
+		this.gc = theGc;
+		updateMonImage(false, null);
+		if(gc != null) {
+			monContext.setListenerOnButton(monImage, theGc);
 			return;
 		}
 
 		monContext.removeListenerOAction(monImage);
 	}
 	
+	public void setBatiment(Batiment theBatiment){
+		if(gc == null){
+			this.batiment = theBatiment;
+			updateMonImage(false, null);
+			if(batiment != null) {
+				monContext.setListenerOnButton(monImage, theBatiment);
+				return;
+			}
+
+			monContext.removeListenerOAction(monImage);			
+		} else {
+			throw new IllegalStateException("Changer un batiment avec déjà une unité dessus ? ? ?");
+		}
+	}
+	
 	public Boolean isMine(){
-		if(pion == null){
+		if(gc == null){
 			return false;
 		}
-		if(monContext.plateauDeJeu.getEquipeActuelle() != pion.getEquipe()){
+		if(monContext.plateauDeJeu.getEquipeActuelle() != gc.getEquipe()){
 			return false;
 		}
 		
 		return true;
 	}
+
+	private void updateMonImage(){
+		if(batiment == null && gc == null){
+			monImage.setBackgroundResource(R.drawable.empty);
+		} else if(batiment != null && gc != null){
+			if(batiment.getEquipe().equals(gc.getEquipe())){
+				if(batiment.getEquipe().equals(Couleur.bleu)){
+					monImage.setBackgroundResource(R.drawable.sup_blue_blue_building);
+				} else if(batiment.getEquipe().equals(Couleur.rouge)){
+					monImage.setBackgroundResource(R.drawable.sup_red_red_building);
+				}
+			} else {
+				if(batiment.getEquipe().equals(Couleur.bleu)){
+					if(gc.getEquipe().equals(Couleur.rouge)){
+						monImage.setBackgroundResource(R.drawable.sup_blue_red_building);						
+					}
+				} else if(batiment.getEquipe().equals(Couleur.rouge)){
+					if(gc.getEquipe().equals(Couleur.bleu)){
+						monImage.setBackgroundResource(R.drawable.sup_red_blue_building);						
+					}
+				}
+			}
+		} else if(gc == null){
+			if(batiment.getEquipe().equals(Couleur.bleu)){
+				monImage.setBackgroundResource(R.drawable.blue_building);
+			} else if(batiment.getEquipe().equals(Couleur.rouge)){
+				monImage.setBackgroundResource(R.drawable.red_building);
+			}
+		} else if(batiment == null){
+			switch(gc.getType()){
+			case UnitesEtBatiment.Unites.Infanterie.ID:
+				if(gc.getEquipe().equals(Couleur.bleu)){
+					monImage.setBackgroundResource(R.drawable.blue_inf);
+				} else if(gc.getEquipe().equals(Couleur.rouge)){
+					monImage.setBackgroundResource(R.drawable.red_inf);
+				}
+				break;
+			case UnitesEtBatiment.Unites.Vehicule.ID:
+				if(gc.getEquipe().equals(Couleur.bleu)){
+					monImage.setBackgroundResource(R.drawable.blue_tank);
+				} else if(gc.getEquipe().equals(Couleur.rouge)){
+					monImage.setBackgroundResource(R.drawable.red_tank);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	public void updateMonImage(Integer theMoveCodeUnit){
+		if(gc != null){
+			if(gc.getType() == UnitesEtBatiment.Unites.Infanterie.ID){
+				if(gc.getEquipe().equals(Couleur.bleu)){
+					monImage.setBackgroundResource(R.drawable.blue_inf_dark);
+				} else if(gc.getEquipe().equals(Couleur.rouge)){
+					monImage.setBackgroundResource(R.drawable.red_inf_dark);
+				}
+			} else if(gc.getType() == UnitesEtBatiment.Unites.Vehicule.ID){
+				if(gc.getEquipe().equals(Couleur.bleu)){
+					monImage.setBackgroundResource(R.drawable.blue_tank_dark);
+				} else if(gc.getEquipe().equals(Couleur.rouge)){
+					monImage.setBackgroundResource(R.drawable.red_tank_dark);
+				}
+			}
+		} else if(batiment != null){
+			if(batiment.getEquipe().equals(Couleur.bleu)){
+				monImage.setBackgroundResource(R.drawable.can_move_blue_building);
+			} else if(batiment.getEquipe().equals(Couleur.rouge)){
+				monImage.setBackgroundResource(R.drawable.can_move_red_building);
+			}
+		} else {
+			switch(theMoveCodeUnit){
+			case UnitesEtBatiment.Unites.Infanterie.ID:
+				monImage.setBackgroundResource(R.drawable.can_move_inf);
+				break;
+			case UnitesEtBatiment.Unites.Vehicule.ID:
+				monImage.setBackgroundResource(R.drawable.can_move_tank);
+				break;
+			default:
+				throw new IllegalArgumentException("theMoveCodeUnit n'est pas connu : " + theMoveCodeUnit);
+			}
+		}
+	}
 	
 	/**
-	 * Cette méthode permet de changer l'image de l'ImageButton entre deux possibilité
+	 * Cette méthode permet de changer l'image de l'ImageButton entre deux possibilités
 	 * 
 	 * @param theDark définit si l'image est celle d'origine ou celle d'action
 	 * En d'autre terme, si la case est vide et Dark vaut true alors l'image affiché sera
 	 * celle d'un mouvement possible, si dark est false, l'image sera de la verdure 
 	 */
-	public void changeMonImage(boolean theDark){
+	public void updateMonImage(boolean theDark, Integer theMoveCodeUnit){
 		Log.i("Case::changeMonImage", "changement d'image de la case {" + i + "," + j + "}");
 
-		Couleur color = null;
-		try{
-			// Si gc == null ...
-			color = pion.getEquipe();
-		} catch (NullPointerException ex){
-			// on met de la verdure !
-			if(theDark){
-				monImage.setBackgroundResource(R.drawable.can_move);
-			}
-			else {
-				monImage.setBackgroundResource(R.drawable.empty);
-			}
-			return;
-		}
-
-		if(Couleur.bleu.equals(color)){
-			monImage.setBackgroundResource(R.drawable.blue_inf);
-		} else if(Couleur.rouge.equals(color)){
-			if(theDark){
-				monImage.setBackgroundResource(R.drawable.red_inf_dark);
-			} else {
-				monImage.setBackgroundResource(R.drawable.red_inf);
-			}
-		// si la couleur n'est pas connu, il faut la déclarer ! ! !
+		if(theDark){
+			updateMonImage(theMoveCodeUnit);
 		} else {
-			if(theDark){
-				monImage.setBackgroundResource(R.drawable.can_move);
-			}
-			else {
-				monImage.setBackgroundResource(R.drawable.ic_launcher);
-			}
+			updateMonImage();
 		}
 	}
 	
@@ -141,12 +219,12 @@ public class Case implements Serializable{
 	}
 
 	public Case(Integer thei, Integer thej, MainActivity theContext){
-		pion = null;
+		gc = null;
 		i = thei;
 		j = thej;
 
 		monImage = new ImageButton( theContext );
-		changeMonImage(false);
+		updateMonImage(false, null);
 		monImage.setId(i * 10 +  j);
 		monImage.setTag(i * 10 +  j);
 		
@@ -155,7 +233,7 @@ public class Case implements Serializable{
 	}
 
 	public Boolean estVide() {
-		return (pion == null);
+		return (gc == null);
 	}
 
 	/**

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -82,6 +83,8 @@ public class ActionsActivity extends Activity {
 
 		// Suppression des éléments utiles aux Gc
 		((LinearLayout)findViewById(R.id.hightest)).removeView(
+				findViewById(R.id.pv));
+		((LinearLayout)findViewById(R.id.hightest)).removeView(
 				findViewById(R.id.pa));
 		((LinearLayout)findViewById(R.id.hightest)).removeView(
 				findViewById(R.id.pm));
@@ -90,9 +93,8 @@ public class ActionsActivity extends Activity {
 
 		// Récupération du Gc transmit
 		Batiment batiment = (Batiment) getIntent().getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
-		
-		TextView currentText = (TextView) findViewById(R.id.pv);
-		currentText.setText(currentText.getText().toString() + batiment.getPv());
+
+		LayoutParams params = new LayoutParams(80, 80);
 
 		for(Integer i : batiment.getUnitsCreatable()){
 			switch(i){
@@ -101,7 +103,7 @@ public class ActionsActivity extends Activity {
 			}
 			ImageButton unitToCreate = new ImageButton(this);
 			unitToCreate.setBackgroundResource(R.drawable.blue_inf);
-			((LinearLayout)findViewById(R.id.actionsButtons)).addView(unitToCreate);
+			((LinearLayout)findViewById(R.id.actionsButtons)).addView(unitToCreate, params);
 		}
 	}
 }
