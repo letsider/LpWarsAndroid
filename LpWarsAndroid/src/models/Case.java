@@ -113,18 +113,18 @@ public class Case implements Serializable{
 		} else if(batiment != null && gc != null){
 			if(batiment.getEquipe().equals(gc.getEquipe())){
 				if(batiment.getEquipe().equals(Couleur.bleu)){
-					monImage.setBackgroundResource(R.drawable.sup_blue_blue_building);
+					monImage.setBackgroundResource(R.drawable.supp_blue_blue_building);
 				} else if(batiment.getEquipe().equals(Couleur.rouge)){
-					monImage.setBackgroundResource(R.drawable.sup_red_red_building);
+					monImage.setBackgroundResource(R.drawable.supp_red_red_building);
 				}
 			} else {
 				if(batiment.getEquipe().equals(Couleur.bleu)){
 					if(gc.getEquipe().equals(Couleur.rouge)){
-						monImage.setBackgroundResource(R.drawable.sup_blue_red_building);						
+						monImage.setBackgroundResource(R.drawable.supp_blue_red_building);						
 					}
 				} else if(batiment.getEquipe().equals(Couleur.rouge)){
 					if(gc.getEquipe().equals(Couleur.bleu)){
-						monImage.setBackgroundResource(R.drawable.sup_red_blue_building);						
+						monImage.setBackgroundResource(R.drawable.supp_red_blue_building);						
 					}
 				}
 			}
