@@ -13,11 +13,11 @@ public class UnitesEtBatiment {
 	
 	public static class Batiment {
 		
+		public static final int ID = 1;
+		
 		public static class CASERNE {
 
 			public static final int ID = 0;
-
-			public static final Integer PV = 1000;
 			
 			public static final List<Integer> unitesDisponible(){
 
@@ -33,14 +33,12 @@ public class UnitesEtBatiment {
 		public static class USINE_DE_CHAR {
 
 			public static final int ID = 1;
-
-			public static final Integer PV = 5000;
 			
 			public static final List<Integer> unitesDisponible(){
 
 				List<Integer> res = new ArrayList<Integer>();
 				
-				res.add(Integer.valueOf(Unites.Infanterie.ID));
+				res.add(Integer.valueOf(Unites.Vehicule.ID));
 
 				return res;
 				
@@ -49,10 +47,12 @@ public class UnitesEtBatiment {
 	}
 	
 	public static class Unites{
+		
+		public static final int ID = 0;
 	
 		public static class Infanterie {
 			
-			public static final int ID = 0;
+			public static final int ID = 1;
 			
 			public static final Integer PV = Integer.valueOf(1);
 
@@ -64,7 +64,7 @@ public class UnitesEtBatiment {
 		
 		public static class Vehicule {
 			
-			public static final int ID = 1;
+			public static final int ID = 2;
 			
 			public static final Integer PV = Integer.valueOf(100);
 

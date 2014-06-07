@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import models.Gc.Couleur;
+import configuration.CodeActions;
 import configuration.UnitesEtBatiment;
 
 /**
@@ -20,12 +21,6 @@ public class Batiment implements Serializable, Serialized {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Point de vie du GC
-	 * en pourcent
-	 */
-	private Integer pv;
 	
 	private final Integer type;
 
@@ -73,16 +68,6 @@ public class Batiment implements Serializable, Serialized {
 	}
 
 	public Batiment(Couleur theEquipe, Case theCase, int theCodeBatiment) {
-		switch(theCodeBatiment){
-		case UnitesEtBatiment.Batiment.CASERNE.ID:
-			pv = UnitesEtBatiment.Batiment.CASERNE.PV;
-			break;
-		case UnitesEtBatiment.Batiment.USINE_DE_CHAR.ID:
-			pv = UnitesEtBatiment.Batiment.USINE_DE_CHAR.PV;
-			break;
-		default:
-			throw new IllegalArgumentException("Cet entier n'est pas connu des codes d'initialisation d'un GC cf Names.Unites");
-		}
 		type = theCodeBatiment;
 		equipe = theEquipe;
 		maCase = theCase;
@@ -100,8 +85,18 @@ public class Batiment implements Serializable, Serialized {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Instancie et affiche un nouveau Gc sur la case du batiment
+	 * @param theCodeUnite code type du Gc demandé
+	 * @return le Gc correspondant au code passé en paramètre
+	 */
 	public Gc createGc(int theCodeUnite){
-		return new Gc(equipe, maCase, theCodeUnite);
+		if(maCase.getSerialized().getClass().equals(Batiment.class)){
+			// Gc(...) appelle case.setGc() appelle updateMonImage() ...
+			maCase.setGc(new Gc(equipe, maCase, theCodeUnite));
+			return (Gc)maCase.getSerialized();
+		}
+		return null;
 	}
 }

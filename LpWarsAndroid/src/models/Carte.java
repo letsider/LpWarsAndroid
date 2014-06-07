@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 
 import com.example.lpwarsandroid.R;
 
-import configuration.Names;
 import configuration.UnitesEtBatiment;
 import controllers.MainActivity;
 
@@ -101,10 +100,10 @@ public class Carte{
 	private void initUnit(int thex, int they, int theUnitesEtBatimentId, int theCodeUnit){
 		Case curCase = carte[thex + 1][they];
 		switch (theUnitesEtBatimentId) {
-		case Names.UnitesEtBatiment.Batiment.ID:
+		case UnitesEtBatiment.Batiment.ID:
 			curCase.setBatiment(new Batiment(equipeActuelle, curCase, theCodeUnit));
 			break;
-		case Names.UnitesEtBatiment.Unites.ID:
+		case UnitesEtBatiment.Unites.ID:
 			curCase.setGc(new Gc(equipeActuelle, curCase, theCodeUnit));
 			break;
 		default:
@@ -115,26 +114,26 @@ public class Carte{
 	private void initUnits(int theBeginningi, int theBeginningj){
 
 		initUnit(theBeginningi, theBeginningj,
-				Names.UnitesEtBatiment.Batiment.ID, Names.UnitesEtBatiment.Batiment.CASERNE);
+				UnitesEtBatiment.Batiment.ID, UnitesEtBatiment.Batiment.CASERNE.ID);
 		initUnit(theBeginningi + 1, theBeginningj, 
-				Names.UnitesEtBatiment.Batiment.ID, Names.UnitesEtBatiment.Batiment.USINE_DE_CHAR);
+				UnitesEtBatiment.Batiment.ID, UnitesEtBatiment.Batiment.USINE_DE_CHAR.ID);
 		initUnit(theBeginningi - 1, theBeginningj, 
-				Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.VEHICULE);
+				UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Vehicule.ID);
 		initUnit(theBeginningi + 2, theBeginningj, 
-				Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.VEHICULE);
+				UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Vehicule.ID);
 
 		switch(equipes.indexOf(equipeActuelle)){
 		case 0:
 			initUnit(theBeginningi, theBeginningj + 1, 
-					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+					UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Infanterie.ID);
 			initUnit(theBeginningi + 1, theBeginningj + 1, 
-					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+					UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Infanterie.ID);
 			break;
 		case 1:
 			initUnit(theBeginningi, theBeginningj - 1, 
-					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+					UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Infanterie.ID);
 			initUnit(theBeginningi + 1, theBeginningj - 1, 
-					Names.UnitesEtBatiment.Unites.ID, Names.UnitesEtBatiment.Unites.INFANTERIE);
+					UnitesEtBatiment.Unites.ID, UnitesEtBatiment.Unites.Infanterie.ID);
 			break;
 		default:
 			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux) : "

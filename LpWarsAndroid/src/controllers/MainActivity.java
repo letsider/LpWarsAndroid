@@ -25,6 +25,7 @@ import com.example.lpwarsandroid.R;
 import configuration.CodeActions;
 import configuration.IdentifiantsActivity;
 import configuration.Names;
+import configuration.UnitesEtBatiment;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -55,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
 		Log.i("MainActivity::OnCreate", "initialisation d'une map");
 
 	}
-	
+
 	@Override 
 	public void onActivityResult(int theRequestCode, int theResultCode, Intent theIntent) {
 		super.onActivityResult(theRequestCode, theResultCode, theIntent);
@@ -76,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
 				caseAffichageTemporaire.addAll(
 						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized())
 						.setActionPossible());
-				
+
 				break;
 			case Activity.RESULT_CANCELED:
 				reinitImageButtonPlateau();
@@ -85,6 +86,21 @@ public class MainActivity extends ActionBarActivity {
 				break;
 			}
 			break;
+		case IdentifiantsActivity.DETAILS_BUILDING:
+			Batiment batiment = (Batiment)theIntent.getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
+			switch(theResultCode){
+			case UnitesEtBatiment.Unites.Infanterie.ID:
+				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
+				.createGc(UnitesEtBatiment.Unites.Infanterie.ID);
+				break;
+			case UnitesEtBatiment.Unites.Vehicule.ID:
+				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
+				.createGc(UnitesEtBatiment.Unites.Vehicule.ID);
+				break;
+			case Activity.RESULT_CANCELED:
+			default :
+				break;
+			}
 		default:
 			break;
 		}
@@ -103,11 +119,7 @@ public class MainActivity extends ActionBarActivity {
 			if(curCase.getSerialized() == null){
 				removeListenerOAction(curCase.getMonImage());
 			} else {
-				if(curCase.getSerialized().getClass().equals(Gc.class)){
-					setListenerOnButton(curCase.getMonImage(), curCase.getSerialized());
-				} else if(curCase.getSerialized().getClass().equals(Batiment.class)){
-					setListenerOnButton(curCase.getMonImage(), curCase.getSerialized());
-				}
+				setListenerOnButton(curCase.getMonImage(), curCase.getSerialized());
 			}
 		}
 		caseAffichageTemporaire.clear();
@@ -152,6 +164,7 @@ public class MainActivity extends ActionBarActivity {
 						intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
 					}
 
+					startActivityForResult(intent, IdentifiantsActivity.DETAILS_UNIT);
 				} else if(thePion.getClass().equals(Batiment.class)){
 
 					intent.putExtra(Names.Generales.BATIMENT_CLICKED, (Batiment)thePion);
@@ -161,8 +174,8 @@ public class MainActivity extends ActionBarActivity {
 						intent.putExtra(Names.Generales.SELECTIONNALBLE, false);
 					}
 
+					startActivityForResult(intent, IdentifiantsActivity.DETAILS_BUILDING);
 				}
-				startActivityForResult(intent, IdentifiantsActivity.DETAILS_UNIT);
 			}
 
 		});
@@ -172,7 +185,7 @@ public class MainActivity extends ActionBarActivity {
 
 	public void setActionOnButton(ImageButton theTarget, final int theCodeAction,
 			final Gc theGcTargeted, final Case theWhere) {
-		
+
 		theTarget.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -187,7 +200,7 @@ public class MainActivity extends ActionBarActivity {
 					theGcTargeted.mouvement(plateauDeJeu, theWhere.geti(), theWhere.getj());
 					break;
 				}
-				
+
 				// Après une action, on remet le plateau dans un état stable
 				reinitImageButtonPlateau();
 			}
@@ -243,7 +256,7 @@ public class MainActivity extends ActionBarActivity {
 		default:
 			break;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
