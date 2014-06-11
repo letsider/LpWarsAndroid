@@ -15,7 +15,5 @@ public interface Serialized {
 
 	public Integer getj();
 
-	public void setEquipe(Couleur theEquipe);
-
 	public void setMaCase(Case theCase);
 }

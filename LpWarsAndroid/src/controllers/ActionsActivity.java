@@ -5,7 +5,10 @@ import models.Gc;
 import models.Batiment;
 import models.Gc.Couleur;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.lpwarsandroid.R;
 
+import configuration.CodeActions;
 import configuration.Names;
 import configuration.UnitesEtBatiment;
 
@@ -44,15 +48,28 @@ public class ActionsActivity extends Activity {
 
 		// Affichage des données dynamiques transmises
 		TextView currentText = (TextView) findViewById(R.id.pv);
-		currentText.setText(currentText.getText().toString() + gc.getPv());
+		currentText.setText(currentText.getText().toString() + " " + gc.getPv());
 		currentText = (TextView) findViewById(R.id.pa);
-		currentText.setText(currentText.getText().toString() + gc.getPa());
+		currentText.setText(currentText.getText().toString() + " " + gc.getPa());
 		currentText = (TextView) findViewById(R.id.pm);
-		currentText.setText(currentText.getText().toString() + gc.getPm());
+		currentText.setText(currentText.getText().toString() + " " + gc.getPm());
 
 		Button getBackV = (Button) findViewById(R.id.select);
 		if((Boolean) getIntent().getExtras().getSerializable(Names.Generales.SELECTIONNALBLE)){
-			setListenerOnButton(getBackV, Activity.RESULT_OK);
+			if(gc.getPm() > 0){
+				setListenerOnButton(getBackV, Activity.RESULT_OK);
+				// Si le Gc est sur une case avec un batiment qui n'est pas le sien
+				if(gc.getMaCase().isCapturable()){
+					// On lui donne la possibilité de le capturer
+					Button captureButton = new Button(this);
+					setListenerOnButton(captureButton, CodeActions.CAPTURER);
+					((LinearLayout)findViewById(R.id.returnButtons)).addView(captureButton, 0);
+				}
+			} else {
+				currentText.setTextColor(Color.RED);
+				((LinearLayout)findViewById(R.id.returnButtons)).removeView(getBackV);
+			}
+
 		} else {
 			((LinearLayout)findViewById(R.id.returnButtons)).removeView(getBackV);
 		}
@@ -112,5 +129,28 @@ public class ActionsActivity extends Activity {
 			}
 
 		});
+	}
+
+	/**
+	 * ---------------------------------------------------------------------------
+	 * 								Gestion du menu
+	 * ---------------------------------------------------------------------------
+	 */
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		setResult(CodeActions.FIN_DE_TOUR, getIntent());
+		finish();
+
+		return super.onOptionsItemSelected(item);
 	}
 }

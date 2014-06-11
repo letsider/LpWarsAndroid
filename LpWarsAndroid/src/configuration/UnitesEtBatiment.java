@@ -18,6 +18,8 @@ public class UnitesEtBatiment {
 		public static class CASERNE {
 
 			public static final int ID = 0;
+
+			public static final Integer FIDELITE = 1;
 			
 			public static final List<Integer> unitesDisponible(){
 
@@ -33,6 +35,8 @@ public class UnitesEtBatiment {
 		public static class USINE_DE_CHAR {
 
 			public static final int ID = 1;
+
+			public static final Integer FIDELITE = 1;
 			
 			public static final List<Integer> unitesDisponible(){
 

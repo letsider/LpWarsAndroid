@@ -69,12 +69,18 @@ public class Case implements Serializable{
 		return monImage;
 	}
 
+	public Batiment getBatiment(){
+		return batiment;
+	}
 
 	public void setGc(Gc theGc){
 		this.gc = theGc;
 		updateMonImage(false, null);
 		if(gc != null) {
-			monContext.setListenerOnButton(monImage, theGc);
+			monContext.setListenerOnButton(monImage, gc);
+			return;
+		} else if(batiment != null){
+			monContext.setListenerOnButton(monImage, batiment);
 			return;
 		}
 
@@ -96,7 +102,7 @@ public class Case implements Serializable{
 		}
 	}
 	
-	public Boolean isMine(){
+	public Boolean isMyTurn(){
 		if(gc == null){
 			return false;
 		}
@@ -107,15 +113,31 @@ public class Case implements Serializable{
 		return true;
 	}
 
+	public Boolean isCapturable(){
+		if(batiment != null && gc != null
+				&& ! batiment.getEquipe().equals(gc.getEquipe())){
+			return true;
+		}
+		return false;
+	}
+
 	private void updateMonImage(){
 		if(batiment == null && gc == null){
 			monImage.setBackgroundResource(R.drawable.empty);
 		} else if(batiment != null && gc != null){
 			if(batiment.getEquipe().equals(gc.getEquipe())){
-				if(batiment.getEquipe().equals(Couleur.bleu)){
-					monImage.setBackgroundResource(R.drawable.supp_blue_blue_building);
-				} else if(batiment.getEquipe().equals(Couleur.rouge)){
-					monImage.setBackgroundResource(R.drawable.supp_red_red_building);
+				if(gc.getType() == UnitesEtBatiment.Unites.Infanterie.ID){
+					if(batiment.getEquipe().equals(Couleur.bleu)){
+						monImage.setBackgroundResource(R.drawable.supp_blue_blue_building);
+					} else if(batiment.getEquipe().equals(Couleur.rouge)){
+						monImage.setBackgroundResource(R.drawable.supp_red_red_building);
+					}
+				} else if(gc.getType() == UnitesEtBatiment.Unites.Vehicule.ID){
+					if(batiment.getEquipe().equals(Couleur.bleu)){
+						monImage.setBackgroundResource(R.drawable.supp_blue_building);
+					} else if(batiment.getEquipe().equals(Couleur.rouge)){
+						monImage.setBackgroundResource(R.drawable.supp_red_building);
+					}
 				}
 			} else {
 				if(batiment.getEquipe().equals(Couleur.bleu)){
@@ -156,7 +178,7 @@ public class Case implements Serializable{
 		}
 	}
 	
-	public void updateMonImage(Integer theMoveCodeUnit){
+	private void updateMonImage(Integer theMoveCodeUnit){
 		if(gc != null){
 			if(gc.getType() == UnitesEtBatiment.Unites.Infanterie.ID){
 				if(gc.getEquipe().equals(Couleur.bleu)){
@@ -197,6 +219,8 @@ public class Case implements Serializable{
 	 * @param theDark définit si l'image est celle d'origine ou celle d'action
 	 * En d'autre terme, si la case est vide et Dark vaut true alors l'image affiché sera
 	 * celle d'un mouvement possible, si dark est false, l'image sera de la verdure 
+	 * @param theMoveCodeUnit utilisé seulement si theDark est à vrai, correspond au code unité
+	 * visé
 	 */
 	public void updateMonImage(boolean theDark, Integer theMoveCodeUnit){
 		Log.i("Case::changeMonImage", "changement d'image de la case {" + i + "," + j + "}");

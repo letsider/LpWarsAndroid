@@ -1,58 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/hightest"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/layout_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/pv"
+        <LinearLayout
+            android:id="@+id/hightest"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pv" />
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/pa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pa" />
+            <LinearLayout
+                android:id="@+id/layout_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/pm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pm" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/pv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pv" />
 
-    <LinearLayout
-        android:id="@+id/actionsButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+                <TextView
+                    android:id="@+id/pa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pa" />
 
-    <LinearLayout
-        android:id="@+id/returnButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+                <TextView
+                    android:id="@+id/pm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pm" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select" />
+            <LinearLayout
+                android:id="@+id/actionsButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
-        <Button
-            android:id="@+id/getBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/getBack" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/returnButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
-</LinearLayout>
+                <Button
+                    android:id="@+id/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select" />
+
+                <Button
+                    android:id="@+id/getBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/getBack" />
+            </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</ScrollView>

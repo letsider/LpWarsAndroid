@@ -109,11 +109,6 @@ public class Gc implements Serializable, Serialized {
 	}
 
 	@Override
-	public void setEquipe(Couleur theEquipe){
-		this.equipe = theEquipe;
-	}
-
-	@Override
 	public void setMaCase(Case maCase) {
 		this.maCase = maCase;
 	}
@@ -162,7 +157,7 @@ public class Gc implements Serializable, Serialized {
 	 * @return si le mouvement à eu lieu
 	 */
 	public Boolean mouvement(Carte theCarte, Integer thei, Integer thej){
-		if(maCase.isMine()){
+		if(maCase.isMyTurn()){
 			// Si la cible est a porté !
 			if(Math.abs(geti() - thei) + Math.abs(getj() - thej) <= pm){
 				theCarte.getCase(thei, thej).setGc(this);
@@ -176,11 +171,22 @@ public class Gc implements Serializable, Serialized {
 	}
 
 	public Boolean attaque(Gc gcDef){
-		if(maCase.isMine()){
+		if(maCase.isMyTurn()){
 			// Si la cible est a porté
 			if(Math.abs(geti() - gcDef.geti()) + Math.abs(getj() - gcDef.getj()) == 1){
 				gcDef.setPv(gcDef.getPv() - this.pa);
 				this.pm = 0;
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Boolean capturer(){
+		if(maCase.isMyTurn()){
+			if( ! maCase.getBatiment().getEquipe().equals(equipe)){
+				maCase.getBatiment().baisserFidelite(this);
+				pm = 0;
 				return true;
 			}
 		}

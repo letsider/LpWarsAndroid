@@ -34,9 +34,9 @@ public class Carte{
 	private List<Gc.Couleur> equipes;
 	private Gc.Couleur equipeActuelle;
 	private Iterator<Gc.Couleur> equipeActuelleIt;
-	
+
 	private MainActivity monContext;
-	
+
 	/**
 	 * Permet de stocker les différents contenus dynamiques créés
 	 */
@@ -64,7 +64,7 @@ public class Carte{
 	public void setcase(Integer i, Integer j, Case theCase){
 		this.carte[i][j] = theCase;
 	}
-	
+
 	private Couleur nextEquipe(){
 		if(equipeActuelleIt.hasNext()){
 			equipeActuelle = equipeActuelleIt.next();
@@ -72,7 +72,7 @@ public class Carte{
 			equipeActuelleIt = equipes.iterator();
 			equipeActuelle = equipeActuelleIt.next();
 		}
-		
+
 		return equipeActuelle;
 	}
 
@@ -96,7 +96,7 @@ public class Carte{
 			existLayout.addView(postLayout[i]);
 		}
 	}
-	
+
 	private void initUnit(int thex, int they, int theUnitesEtBatimentId, int theCodeUnit){
 		Case curCase = carte[thex + 1][they];
 		switch (theUnitesEtBatimentId) {
@@ -110,7 +110,7 @@ public class Carte{
 			throw new IllegalArgumentException("Problème d'initialisation du plateau (nombre d'équipe trop nombreux) : " + theUnitesEtBatimentId);
 		}
 	}
-	
+
 	private void initUnits(int theBeginningi, int theBeginningj){
 
 		initUnit(theBeginningi, theBeginningj,
@@ -156,11 +156,11 @@ public class Carte{
 		equipeActuelle = equipeActuelleIt.next();
 
 		Log.i("Carte::Carte", "init des positionnement des pions");
-		initUnits((carte.length / 2) - 1, 0);
+		initUnits((carte.length / 2) - 2, 0);
 		nextEquipe();
-		initUnits((carte.length / 2) - 1, carte[(carte.length / 2) - 1].length - 1);
+		initUnits((carte.length / 2) - 2, carte[(carte.length / 2) - 1].length - 1);
 		nextEquipe();
-		
+
 		monContext.setTitle(monContext.getResources().getString(R.string.app_name) 
 				+ " - " + equipeActuelle.toString());
 	}
@@ -170,7 +170,7 @@ public class Carte{
 		++compteur;
 
 		nextEquipe();
-		
+
 		for(int i=0; i < carte.length; ++i){
 			for (int j=0; j < carte[i].length ; ++j){ 
 				if(getCase(i, j).getSerialized() != null){
@@ -188,7 +188,11 @@ public class Carte{
 				}
 			}
 		}
-		
+
+		if(gagner() != null){
+			monContext.finish();
+		}
+		monContext.reinitImageButtonPlateau();
 		monContext.setTitle(monContext.getResources().getString(R.string.app_name) 
 				+ " - " + equipeActuelle.toString());
 
@@ -205,8 +209,9 @@ public class Carte{
 		for(Case [] ligne : carte){
 			for(Case cellule : ligne){
 				if(cellule.getSerialized() != null){
-					if(enVie.contains(cellule.getSerialized().getEquipe())
-							&& enVie.size() == equipes.size()){
+					if(enVie.contains(cellule.getSerialized().getEquipe())){
+						continue;
+					} else if(enVie.size() == equipes.size()){
 						return null;
 					} else {
 						enVie.add(cellule.getSerialized().getEquipe());
@@ -214,7 +219,7 @@ public class Carte{
 				}
 			}
 		}
-		
+
 		if(enVie.size() == 1){
 			return enVie.get(0);
 		} else {
@@ -228,7 +233,7 @@ public class Carte{
 		} else if(theI >= carte.length || theJ >= carte[0].length){
 			return false;
 		} 
-		
+
 		return true;
 	}
 

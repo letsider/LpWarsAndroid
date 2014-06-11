@@ -64,6 +64,12 @@ public class MainActivity extends ActionBarActivity {
 		switch(theRequestCode) {
 		case IdentifiantsActivity.DETAILS_UNIT :
 
+			Gc gcClicked = null;
+			if(theResultCode != Activity.RESULT_CANCELED){
+				gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.Generales.GC_CLICKED);
+				gcClicked = (Gc) plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized();
+			}
+
 			switch (theResultCode) {
 			case Activity.RESULT_OK:
 
@@ -71,13 +77,17 @@ public class MainActivity extends ActionBarActivity {
 				// en le mettant dans son état stable
 				reinitImageButtonPlateau();
 
-				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.Generales.GC_CLICKED);
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
-				caseAffichageTemporaire.addAll(
-						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized())
-						.setActionPossible());
+				caseAffichageTemporaire.addAll(gcClicked.setActionPossible());
 
+				break;
+			case CodeActions.CAPTURER:
+				gcClicked.capturer();
+				gcClicked.getMaCase().updateMonImage(false, null);
+				break;
+			case CodeActions.FIN_DE_TOUR:
+				plateauDeJeu.finTour();
 				break;
 			case Activity.RESULT_CANCELED:
 				reinitImageButtonPlateau();
@@ -87,17 +97,23 @@ public class MainActivity extends ActionBarActivity {
 			}
 			break;
 		case IdentifiantsActivity.DETAILS_BUILDING:
-			Batiment batiment = (Batiment)theIntent.getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
+
+			Batiment batiment = null;
+			if(theResultCode != Activity.RESULT_CANCELED){
+				batiment = (Batiment)theIntent.getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
+				batiment = (Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized();
+			}
+
 			switch(theResultCode){
 			case UnitesEtBatiment.Unites.Infanterie.ID:
-				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
-				.createGc(UnitesEtBatiment.Unites.Infanterie.ID);
+				batiment.createGc(UnitesEtBatiment.Unites.Infanterie.ID);
 				break;
 			case UnitesEtBatiment.Unites.Vehicule.ID:
-				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
-				.createGc(UnitesEtBatiment.Unites.Vehicule.ID);
+				batiment.createGc(UnitesEtBatiment.Unites.Vehicule.ID);
 				break;
-			case Activity.RESULT_CANCELED:
+			case CodeActions.FIN_DE_TOUR:
+				plateauDeJeu.finTour();
+				break;
 			default :
 				break;
 			}
@@ -248,10 +264,6 @@ public class MainActivity extends ActionBarActivity {
 		switch (id) {
 		case R.id.fin_de_tour:
 			plateauDeJeu.finTour();
-			if(plateauDeJeu.gagner() != null){
-				finish();
-			}
-			reinitImageButtonPlateau();
 			break;
 		default:
 			break;

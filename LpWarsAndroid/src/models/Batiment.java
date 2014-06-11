@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import models.Gc.Couleur;
-import configuration.CodeActions;
 import configuration.UnitesEtBatiment;
 
 /**
@@ -27,6 +26,8 @@ public class Batiment implements Serializable, Serialized {
 	private Couleur equipe;
 	
 	private Case maCase;
+	
+	private Integer fidelite;
 	
 	/**
 	 * Getters and setters
@@ -58,16 +59,22 @@ public class Batiment implements Serializable, Serialized {
 	}
 
 	@Override
-	public void setEquipe(Couleur theEquipe){
-		this.equipe = theEquipe;
-	}
-
-	@Override
 	public void setMaCase(Case maCase) {
 		this.maCase = maCase;
 	}
 
 	public Batiment(Couleur theEquipe, Case theCase, int theCodeBatiment) {
+		switch (theCodeBatiment) {
+		case UnitesEtBatiment.Batiment.CASERNE.ID:
+			fidelite = UnitesEtBatiment.Batiment.CASERNE.FIDELITE;
+			break;
+		case UnitesEtBatiment.Batiment.USINE_DE_CHAR.ID:
+			fidelite = UnitesEtBatiment.Batiment.USINE_DE_CHAR.FIDELITE;
+			break;
+
+		default:
+			throw new IllegalArgumentException("Cet entier n'est pas connu des codes d'initialisation d'un GC cf Names.Unites");
+		}
 		type = theCodeBatiment;
 		equipe = theEquipe;
 		maCase = theCase;
@@ -95,8 +102,21 @@ public class Batiment implements Serializable, Serialized {
 		if(maCase.getSerialized().getClass().equals(Batiment.class)){
 			// Gc(...) appelle case.setGc() appelle updateMonImage() ...
 			maCase.setGc(new Gc(equipe, maCase, theCodeUnite));
+			((Gc)maCase.getSerialized()).setPm(0);
 			return (Gc)maCase.getSerialized();
 		}
 		return null;
+	}
+	
+	/**
+	 * Diminue la fidelite à son équipe
+	 * Si le Gc est de la même couleur, la fidélité descendra
+	 * quand même ! ! ! !
+	 * @param theGc est le groupe de combat qui effectue la capture
+	 */
+	public void baisserFidelite(Gc theGc){
+		if((fidelite -= theGc.getPa()) <= 0){
+			equipe = theGc.getEquipe();
+		}
 	}
 }
