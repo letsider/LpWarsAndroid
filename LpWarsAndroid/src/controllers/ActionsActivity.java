@@ -62,6 +62,7 @@ public class ActionsActivity extends Activity {
 				if(gc.getMaCase().isCapturable()){
 					// On lui donne la possibilité de le capturer
 					Button captureButton = new Button(this);
+					captureButton.setText("Capturer");
 					setListenerOnButton(captureButton, CodeActions.CAPTURER);
 					((LinearLayout)findViewById(R.id.returnButtons)).addView(captureButton, 0);
 				}
