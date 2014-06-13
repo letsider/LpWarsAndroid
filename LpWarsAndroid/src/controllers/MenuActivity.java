@@ -42,20 +42,16 @@ public class MenuActivity extends Activity
 
 	public void clickChoice(View currentView)
 	{
-		switch (currentView.getId())
-		{
-		case R.id.play:
+		int id = currentView.getId();
+		if (id == R.id.play) {
 			play = new Intent(MenuActivity.this, MainActivity.class);
 			startActivity(play);
 			start=0;
 			finishActivity();
-			break;
-		case R.id.aboutit:
+		} else if (id == R.id.aboutit) {
 			aboutIt = new Intent(MenuActivity.this,AboutIt.class);
 			startActivity(aboutIt);
 			finishActivity();
-			break;
-					
 		}
 
 	}

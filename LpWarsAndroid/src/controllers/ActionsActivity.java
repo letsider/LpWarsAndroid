@@ -1,6 +1,8 @@
 package controllers;
 
 
+import com.example.lpwarsandroid.R;
+
 import models.Gc;
 import models.Batiment;
 import models.Gc.Couleur;
@@ -16,9 +18,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.example.lpwarsandroid.R;
-
 import configuration.CodeActions;
 import configuration.Names;
 import configuration.UnitesEtBatiment;
