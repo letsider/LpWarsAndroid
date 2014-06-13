@@ -10,7 +10,12 @@ import models.Carte;
 import models.Case;
 import models.Gc;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,6 +34,8 @@ import configuration.UnitesEtBatiment;
 
 public class MainActivity extends ActionBarActivity {
 
+	MediaPlayer mp;
+	Intent menu = null;
 	/**
 	 * Doit contenir tout les plateaux
 	 * A ce jour, qu'un !
@@ -51,6 +58,9 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.plateau);
+		mp = MediaPlayer.create(MainActivity.this, R.raw.battle);
+		mp.setLooping(true);
+		mp.start();
 
 		plateauDeJeu = new Carte(this, cote, new Gc.Couleur[]{Gc.Couleur.bleu, Gc.Couleur.rouge});
 		Log.i("MainActivity::OnCreate", "initialisation d'une map");
@@ -64,12 +74,6 @@ public class MainActivity extends ActionBarActivity {
 		switch(theRequestCode) {
 		case IdentifiantsActivity.DETAILS_UNIT :
 
-			Gc gcClicked = null;
-			if(theResultCode != Activity.RESULT_CANCELED){
-				gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.Generales.GC_CLICKED);
-				gcClicked = (Gc) plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized();
-			}
-
 			switch (theResultCode) {
 			case Activity.RESULT_OK:
 
@@ -77,17 +81,13 @@ public class MainActivity extends ActionBarActivity {
 				// en le mettant dans son état stable
 				reinitImageButtonPlateau();
 
+				Gc gcClicked = (Gc)theIntent.getExtras().getSerializable(Names.Generales.GC_CLICKED);
 				// le gcClicked à perdu les infomations Context (MainActivity et ImageButton)
 				// alors que le plateauDeJeu de jeu n'a pas bougé !
-				caseAffichageTemporaire.addAll(gcClicked.setActionPossible());
+				caseAffichageTemporaire.addAll(
+						((Gc)plateauDeJeu.getCase(gcClicked.geti(), gcClicked.getj()).getSerialized())
+						.setActionPossible());
 
-				break;
-			case CodeActions.CAPTURER:
-				gcClicked.capturer();
-				gcClicked.getMaCase().updateMonImage(false, null);
-				break;
-			case CodeActions.FIN_DE_TOUR:
-				plateauDeJeu.finTour();
 				break;
 			case Activity.RESULT_CANCELED:
 				reinitImageButtonPlateau();
@@ -97,23 +97,17 @@ public class MainActivity extends ActionBarActivity {
 			}
 			break;
 		case IdentifiantsActivity.DETAILS_BUILDING:
-
-			Batiment batiment = null;
-			if(theResultCode != Activity.RESULT_CANCELED){
-				batiment = (Batiment)theIntent.getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
-				batiment = (Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized();
-			}
-
+			Batiment batiment = (Batiment)theIntent.getExtras().getSerializable(Names.Generales.BATIMENT_CLICKED);
 			switch(theResultCode){
 			case UnitesEtBatiment.Unites.Infanterie.ID:
-				batiment.createGc(UnitesEtBatiment.Unites.Infanterie.ID);
+				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
+				.createGc(UnitesEtBatiment.Unites.Infanterie.ID);
 				break;
 			case UnitesEtBatiment.Unites.Vehicule.ID:
-				batiment.createGc(UnitesEtBatiment.Unites.Vehicule.ID);
+				((Batiment)plateauDeJeu.getCase(batiment.geti(), batiment.getj()).getSerialized())
+				.createGc(UnitesEtBatiment.Unites.Vehicule.ID);
 				break;
-			case CodeActions.FIN_DE_TOUR:
-				plateauDeJeu.finTour();
-				break;
+			case Activity.RESULT_CANCELED:
 			default :
 				break;
 			}
@@ -264,12 +258,55 @@ public class MainActivity extends ActionBarActivity {
 		switch (id) {
 		case R.id.fin_de_tour:
 			plateauDeJeu.finTour();
+			if(plateauDeJeu.gagner() != null){
+				finish();
+			}
+			reinitImageButtonPlateau();
 			break;
 		default:
 			break;
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onResume()
+	{
+		super.onResume();
+		if(!mp.isPlaying()){
+			mp = MediaPlayer.create(MainActivity.this, R.raw.battle);
+			mp.setLooping(true);
+			mp.start();
+		}
+	}
+	
+	public void finishActivity()
+	{
+		mp.stop();
+		this.finish();
+	}
+	protected void onPause() {
+	    if (this.isFinishing()){ //basically BACK was pressed from this activity
+	      mp.stop();
+	    }
+	    Context context = getApplicationContext();
+	    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+	    List<RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+	    if (!taskInfo.isEmpty()) {
+	      ComponentName topActivity = taskInfo.get(0).topActivity; 
+	      if (!topActivity.getPackageName().equals(context.getPackageName())) {
+	        mp.stop();
+	      }
+	    }
+	    super.onPause();
+	  }
+	public void onBackPressed()
+	{
+		menu = new Intent(this, MenuActivity.class);
+		startActivity(menu);
+		mp.stop();
+		this.finish();
+		
 	}
 
 }

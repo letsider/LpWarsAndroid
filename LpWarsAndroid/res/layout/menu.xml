@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/androidbg"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    android:background="@drawable/androidbg">
     <TextView
         android:id="@+id/welcome"
         android:layout_width="wrap_content"
@@ -12,8 +12,7 @@
         android:layout_gravity="center"
         android:text="@string/welcome"
         android:textSize="30sp" />
-
-    <Button
+   <Button
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,5 +20,13 @@
         android:layout_marginTop="70dp"
         android:onClick="clickChoice"
         android:text="@string/playStr" />
-
+    
+    
+    <Button
+        android:id="@+id/aboutit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="clickChoice"
+        android:text="@string/info" />
 </LinearLayout>

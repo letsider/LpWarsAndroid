@@ -7,10 +7,11 @@
     <string name="pm">Point de mouvement :</string>
     <string name="pv">Point de vie :</string>
     <string name="whatToDo">Effectuer une action</string>
-    <string name="capture">Capturer</string>
-    <string name="select">Sélectionner</string>
     <string name="getBack">Retour</string>
-    <string android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/string1" name="playStr">Play</string>
-    <string android:id="@+id/welcome" android:layout_height="wrap_content" android:layout_width="wrap_content" name="welcome">Welcome</string>
-
+    <string name="select">Sélectionner</string>
+    <string name="playStr">Play</string>
+    <string name="welcome">Welcome</string>
+    <string name="version">Version</string>
+	<string name="developers">Developers</string>
+	<string name="info">About LpWars</string>
 </resources>
