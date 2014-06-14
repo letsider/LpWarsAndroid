@@ -15,7 +15,8 @@
         android:label="@string/app_name">
         <activity
             android:name="controllers.MenuActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,13 +25,16 @@
         </activity>
         <activity
             android:name="controllers.ActionsActivity"
-            android:label="@string/whatToDo" />
+            android:label="@string/whatToDo"
+            android:screenOrientation="portrait" />
         <activity
             android:name="controllers.MainActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name="controllers.AboutIt"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
